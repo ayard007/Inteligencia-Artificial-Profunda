@@ -1,0 +1,1935 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reconocimiento Facial — IA Profunda | Proyecto Final</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06090f;--bg2:#0d1117;--bg3:#161b22;--card:#0d1117;
+  --border:rgba(56,139,253,0.15);--border2:rgba(56,139,253,0.3);
+  --accent:#388bfd;--accent2:#79c0ff;
+  --green:#3fb950;--green2:#56d364;
+  --amber:#d29922;--amber2:#e3b341;
+  --red:#f85149;--purple:#bc8cff;--pink:#f778ba;
+  --text:#e6edf3;--text2:#8b949e;--text3:#484f58;
+  --mono:'JetBrains Mono',monospace;--sans:'Sora',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);overflow-x:hidden;}
+a{color:var(--accent2);text-decoration:none;}a:hover{text-decoration:underline;}
+
+/* ── NAV ── */
+#topnav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(6,9,15,0.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:0 24px;height:54px;display:flex;align-items:center;gap:0;}
+.nav-brand{font-size:13px;font-weight:700;color:var(--accent2);letter-spacing:.04em;white-space:nowrap;padding-right:20px;border-right:1px solid var(--border);}
+.nav-tabs{display:flex;height:54px;}
+.nav-tab{padding:0 18px;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;border:none;background:none;font-family:var(--sans);border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.nav-tab:hover{color:var(--text);}
+.nav-tab.active{color:var(--accent2);border-bottom-color:var(--accent2);}
+#pbar{position:fixed;top:54px;left:0;right:0;height:2px;background:var(--bg3);z-index:199;}
+#pfill{height:100%;background:linear-gradient(90deg,var(--accent),var(--purple));width:0;transition:width .5s;}
+
+/* ── PAGES ── */
+.page{display:none;padding-top:72px;min-height:100vh;}
+.page.active{display:block;}
+
+/* ── HERO ── */
+.hero{max-width:820px;margin:0 auto;padding:56px 24px 48px;text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(56,139,253,0.1);border:1px solid var(--border2);border-radius:20px;padding:5px 14px;font-size:11px;color:var(--accent2);letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:22px;}
+.hero h1{font-size:clamp(26px,5vw,50px);font-weight:700;line-height:1.13;margin-bottom:14px;}
+.hero h1 em{font-style:normal;color:var(--accent2);}
+.hero .sub{font-size:16px;color:var(--text2);line-height:1.7;max-width:620px;margin:0 auto 36px;}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;max-width:640px;margin:0 auto 36px;}
+.kpi{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 12px;text-align:center;}
+.kpi .v{font-size:24px;font-weight:700;color:var(--accent2);}
+.kpi .l{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-top:3px;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;border-radius:8px;font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;border:none;}
+.btn-p{background:var(--accent);color:#fff;}
+.btn-p:hover{background:var(--accent2);color:#06090f;}
+.btn-s{background:transparent;border:1px solid var(--border2);color:var(--accent2);}
+.btn-s:hover{background:rgba(56,139,253,0.1);}
+.btn-g{background:var(--green);color:#06090f;}
+.btn-g:hover{background:var(--green2);}
+
+/* ── LAYOUT ── */
+.wrap{max-width:860px;margin:0 auto;padding:0 24px 64px;}
+.sec{margin-bottom:52px;}
+.sec-hd{display:flex;align-items:flex-start;gap:14px;padding-bottom:18px;border-bottom:1px solid var(--border);margin-bottom:24px;}
+.sec-num{width:44px;height:44px;border-radius:10px;background:rgba(56,139,253,0.12);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--accent2);flex-shrink:0;}
+.sec-hd h2{font-size:20px;font-weight:700;margin-bottom:3px;}
+.sec-hd p{font-size:13px;color:var(--text2);line-height:1.6;}
+
+/* ── CALLOUTS ── */
+.box{border-radius:10px;padding:14px 18px;margin:14px 0;display:flex;gap:13px;align-items:flex-start;font-size:14px;line-height:1.65;}
+.box-info{background:rgba(56,139,253,0.07);border:1px solid rgba(56,139,253,0.2);}
+.box-warn{background:rgba(210,153,34,0.08);border:1px solid rgba(210,153,34,0.25);}
+.box-ok{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.2);}
+.box-ai{background:rgba(188,140,255,0.07);border:1px solid rgba(188,140,255,0.2);}
+.box-danger{background:rgba(248,81,73,0.07);border:1px solid rgba(248,81,73,0.2);}
+.box-reto{background:rgba(247,120,186,0.07);border:1px solid rgba(247,120,186,0.25);}
+.box-icon{font-size:17px;flex-shrink:0;margin-top:1px;}
+.box-body{flex:1;}
+.box-body b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;}
+.box-info .box-body b{color:var(--accent2);}
+.box-warn .box-body b{color:var(--amber2);}
+.box-ok .box-body b{color:var(--green2);}
+.box-ai .box-body b{color:var(--purple);}
+.box-danger .box-body b{color:var(--red);}
+.box-reto .box-body b{color:var(--pink);}
+.box-body ul{padding-left:18px;margin-top:6px;}
+.box-body li{margin-bottom:4px;}
+
+/* ── CODE ── */
+.cblock{margin:16px 0;border-radius:10px;overflow:hidden;border:1px solid var(--border);}
+.chead{background:var(--bg3);padding:9px 16px;display:flex;justify-content:space-between;align-items:center;}
+.clang{font-family:var(--mono);font-size:12px;color:var(--accent2);font-weight:600;}
+.cdesc{font-size:11px;color:var(--text3);font-style:italic;}
+.cbtn{background:rgba(56,139,253,0.1);border:1px solid var(--border);color:var(--accent2);padding:3px 10px;border-radius:5px;font-size:11px;cursor:pointer;font-family:var(--sans);}
+.cbtn:hover{background:rgba(56,139,253,0.2);}
+.cblock pre{background:var(--bg2);padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.75;color:var(--text);}
+.cm{color:#484f58;font-style:italic;}
+.ck{color:#ff7b72;}
+.cs{color:#a5d6ff;}
+.cn{color:#79c0ff;}
+.cf{color:#d2a8ff;}
+.cg{color:#3fb950;}
+.ca{color:#e3b341;}
+
+/* ── STEPS ── */
+.steps{counter-reset:step;}
+.step{counter-increment:step;background:var(--card);border:1px solid var(--border);border-radius:10px;margin:10px 0;overflow:hidden;}
+.step-hd{padding:14px 18px;display:flex;align-items:center;gap:13px;cursor:pointer;}
+.step-hd:hover{background:rgba(56,139,253,0.04);}
+.step-hd::before{content:counter(step);width:28px;height:28px;border-radius:7px;background:rgba(56,139,253,0.12);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--accent2);flex-shrink:0;}
+.step-title{font-size:14px;font-weight:600;flex:1;}
+.step-tag{font-size:11px;padding:3px 9px;border-radius:12px;background:rgba(56,139,253,0.1);color:var(--accent2);border:1px solid var(--border);}
+.chevron{color:var(--text3);font-size:12px;transition:transform .2s;}
+.step-body{display:none;padding:0 18px 18px;font-size:14px;color:var(--text2);line-height:1.7;}
+.step.open .step-body{display:block;}
+.step.open .chevron{transform:rotate(90deg);}
+
+/* ── QUESTIONS ── */
+.q-block{background:var(--bg3);border:1px solid rgba(188,140,255,0.2);border-radius:10px;padding:18px 20px;margin:14px 0;}
+.q-block h4{font-size:13px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;}
+.q-item{margin-bottom:12px;}
+.q-item p{font-size:14px;color:var(--text);margin-bottom:8px;font-weight:500;}
+.q-item textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:10px 13px;font-family:var(--sans);font-size:13px;color:var(--text);resize:vertical;min-height:70px;transition:border .2s;}
+.q-item textarea:focus{outline:none;border-color:var(--accent);}
+.reveal-btn{background:rgba(188,140,255,0.1);border:1px solid rgba(188,140,255,0.25);color:var(--purple);padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);margin-top:8px;}
+.reveal-btn:hover{background:rgba(188,140,255,0.2);}
+.hint{display:none;margin-top:10px;padding:10px 14px;background:rgba(188,140,255,0.05);border-left:3px solid var(--purple);border-radius:0 6px 6px 0;font-size:13px;color:var(--text2);line-height:1.65;}
+.hint.show{display:block;}
+
+/* ── CHECKLIST ── */
+.checklist{list-style:none;margin:10px 0;}
+.checklist li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--text2);}
+.checklist li:last-child{border:none;}
+.checklist li input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;margin-top:2px;}
+.checklist li label{cursor:pointer;line-height:1.55;}
+
+/* ── PHASE BANNER ── */
+.phase-banner{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:28px 32px;margin-bottom:36px;display:flex;gap:24px;align-items:flex-start;}
+.phase-icon{font-size:36px;flex-shrink:0;}
+.phase-banner h2{font-size:22px;font-weight:700;margin-bottom:6px;}
+.phase-banner p{font-size:14px;color:var(--text2);line-height:1.65;}
+.phase-badge{display:inline-block;padding:3px 12px;border-radius:12px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.p1{background:rgba(56,139,253,0.15);color:var(--accent2);border:1px solid rgba(56,139,253,0.3);}
+.p2{background:rgba(63,185,80,0.15);color:var(--green2);border:1px solid rgba(63,185,80,0.3);}
+.reto{background:rgba(247,120,186,0.15);color:var(--pink);border:1px solid rgba(247,120,186,0.3);}
+
+/* ── LINK CARD ── */
+.links-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:14px 0;}
+.link-card{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;transition:border-color .2s;}
+.link-card:hover{border-color:var(--border2);}
+.link-card .lc-icon{font-size:22px;flex-shrink:0;}
+.link-card .lc-title{font-size:13px;font-weight:600;color:var(--accent2);margin-bottom:3px;}
+.link-card .lc-desc{font-size:12px;color:var(--text3);line-height:1.5;}
+.link-card a{text-decoration:none;display:block;}
+.link-card a:hover .lc-title{text-decoration:underline;}
+
+/* ── RUBRIC ── */
+.rubric-table{width:100%;border-collapse:collapse;font-size:13px;margin:14px 0;}
+.rubric-table th{background:var(--bg3);color:var(--text2);text-transform:uppercase;letter-spacing:.06em;font-size:11px;padding:10px 14px;text-align:left;border:1px solid var(--border);}
+.rubric-table td{padding:10px 14px;border:1px solid var(--border);vertical-align:top;line-height:1.55;}
+.rubric-table tr:hover td{background:rgba(56,139,253,0.03);}
+.pts{font-weight:700;color:var(--accent2);}
+.pts-extra{font-weight:700;color:var(--pink);}
+
+/* ── MISC ── */
+h3{font-size:16px;font-weight:700;margin:20px 0 10px;color:var(--text);}
+p{margin-bottom:10px;line-height:1.7;font-size:14px;color:var(--text2);}
+ul,ol{padding-left:20px;margin-bottom:10px;}
+li{font-size:14px;color:var(--text2);line-height:1.65;margin-bottom:4px;}
+strong{color:var(--text);}
+.tag{display:inline-flex;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;}
+.tag-py{background:rgba(63,185,80,0.12);color:var(--green2);border:1px solid rgba(63,185,80,0.2);}
+.tag-lib{background:rgba(56,139,253,0.12);color:var(--accent2);border:1px solid rgba(56,139,253,0.2);}
+hr{border:none;border-top:1px solid var(--border);margin:28px 0;}
+.center{text-align:center;}
+.mt{margin-top:12px;}
+.flex-gap{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;}
+.arch-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0;}
+@media(max-width:600px){.arch-grid{grid-template-columns:1fr;} .phase-banner{flex-direction:column;gap:14px;padding:20px;}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="topnav">
+  <div class="nav-brand">🧠 IA Profunda — Reconocimiento Facial</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('intro')">Inicio</button>
+    <button class="nav-tab" onclick="showPage('fase1')">Fase 1</button>
+    <button class="nav-tab" onclick="showPage('fase2')">Fase 2</button>
+    <button class="nav-tab" onclick="showPage('reto')">🏆 Reto</button>
+    <button class="nav-tab" onclick="showPage('entrega')">Entrega</button>
+  </div>
+</nav>
+<div id="pbar"><div id="pfill"></div></div>
+
+<!-- ══════════════════════════════════════════
+     PÁGINA: INTRO
+══════════════════════════════════════════ -->
+<div class="page active" id="page-intro">
+<div class="hero">
+  <div class="hero-badge">📷 Visión Artificial · Proyecto Final · 8° Semestre</div>
+  <h1>Sistema de<br><em>Reconocimiento Facial</em><br>con Cámara en Tiempo Real</h1>
+  <p class="sub">Construirás desde cero un sistema completo que detecta rostros en tiempo real, registra usuarios nuevos y los identifica usando embeddings faciales — todo en Python con tu cámara.</p>
+  <div class="kpis">
+    <div class="kpi"><div class="v">2</div><div class="l">Fases</div></div>
+    <div class="kpi"><div class="v">Python</div><div class="l">Lenguaje</div></div>
+    <div class="kpi"><div class="v">VS Code</div><div class="l">IDE</div></div>
+    <div class="kpi"><div class="v">Cámara</div><div class="l">Tiempo real</div></div>
+    <div class="kpi"><div class="v">+Reto</div><div class="l">Puntos extra</div></div>
+  </div>
+  <div class="flex-gap" style="justify-content:center;margin-bottom:28px;">
+    <button class="btn btn-p" onclick="showPage('fase1')">▶ Comenzar Fase 1</button>
+    <button class="btn btn-s" onclick="showPage('entrega')">Ver Rúbrica</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- OBJETIVOS -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num">🎯</div>
+      <div><h2>Objetivos de Aprendizaje</h2><p>Al finalizar esta actividad serás capaz de:</p></div>
+    </div>
+    <ul class="checklist" id="obj-list">
+      <li><input type="checkbox"><label>Comprender el flujo completo de un sistema de reconocimiento facial (captura → detección → embedding → clasificación).</label></li>
+      <li><input type="checkbox"><label>Configurar un entorno virtual de Python e instalar dependencias de visión artificial.</label></li>
+      <li><input type="checkbox"><label>Usar OpenCV para capturar video desde la cámara y detectar rostros con Haar Cascades o DNN.</label></li>
+      <li><input type="checkbox"><label>Generar y comparar embeddings faciales con <code>face_recognition</code> o DeepFace.</label></li>
+      <li><input type="checkbox"><label>Diseñar una base de datos local para almacenar y recuperar identidades.</label></li>
+      <li><input type="checkbox"><label>Implementar la lógica de registro de nuevos usuarios e identificación de usuarios existentes.</label></li>
+      <li><input type="checkbox"><label>Evaluar métricas de precisión del sistema (umbral, falsos positivos).</label></li>
+    </ul>
+  </div>
+
+  <!-- ESTRUCTURA -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num">🗺</div>
+      <div><h2>Estructura de la Actividad</h2><p>El proyecto se divide en dos fases progresivas más un reto opcional para puntos extra.</p></div>
+    </div>
+    <div class="arch-grid">
+      <div style="background:var(--bg3);border:1px solid rgba(56,139,253,0.25);border-radius:10px;padding:18px;">
+        <div class="phase-badge p1">Fase 1</div>
+        <h3 style="margin-top:6px;">Fundamentos y Detección</h3>
+        <p>Entorno, OpenCV, captura de cámara, detección de rostros y construcción de la base de datos de registros.</p>
+        <div class="flex-gap"><span class="tag tag-lib">OpenCV</span><span class="tag tag-lib">face_recognition</span><span class="tag tag-py">Python</span></div>
+      </div>
+      <div style="background:var(--bg3);border:1px solid rgba(63,185,80,0.25);border-radius:10px;padding:18px;">
+        <div class="phase-badge p2">Fase 2</div>
+        <h3 style="margin-top:6px;">Reconocimiento e Identidad</h3>
+        <p>Embeddings faciales, comparación de similitud, flujo de identificación completo y mejoras de UX en tiempo real.</p>
+        <div class="flex-gap"><span class="tag tag-lib">NumPy</span><span class="tag tag-lib">Pickle</span><span class="tag tag-py">Embeddings</span></div>
+      </div>
+    </div>
+    <div style="background:rgba(247,120,186,0.06);border:1px solid rgba(247,120,186,0.2);border-radius:10px;padding:18px;margin-top:10px;">
+      <div class="phase-badge reto">🏆 Reto Extra</div>
+      <h3 style="margin-top:6px;">Funcionalidades Avanzadas</h3>
+      <p>Reconocimiento de emociones, liveness detection, interfaz GUI, historial con timestamps, y más. Opciones a elegir según dificultad.</p>
+    </div>
+  </div>
+
+  <!-- REQUISITOS -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num">⚙️</div>
+      <div><h2>Requisitos Previos</h2><p>Asegúrate de tener lo siguiente antes de comenzar.</p></div>
+    </div>
+    <div class="box box-warn">
+      <div class="box-icon">⚠️</div>
+      <div class="box-body"><b>Verifica antes de iniciar</b>
+        Tu computadora debe cumplir con estos requisitos para que el proyecto funcione correctamente.
+      </div>
+    </div>
+    <ul class="checklist">
+      <li><input type="checkbox"><label><strong>Python 3.8 – 3.11</strong> instalado. Verifica con <code>python --version</code> en la terminal.</label></li>
+      <li><input type="checkbox"><label><strong>Visual Studio Code</strong> con la extensión Python instalada.</label></li>
+      <li><input type="checkbox"><label><strong>Cámara web</strong> funcional (integrada o USB). Pruébala en Zoom/Meet.</label></li>
+      <li><input type="checkbox"><label><strong>pip</strong> actualizado: <code>python -m pip install --upgrade pip</code></label></li>
+      <li><input type="checkbox"><label>Sistema operativo: Windows 10+, macOS 11+, o Ubuntu 20.04+.</label></li>
+      <li><input type="checkbox"><label>Conexión a internet para descargar dependencias.</label></li>
+    </ul>
+
+    <div class="box box-info" style="margin-top:16px;">
+      <div class="box-icon">💡</div>
+      <div class="box-body"><b>Nota sobre cmake (Windows)</b>
+        La librería <code>dlib</code> requiere <strong>cmake</strong> y las herramientas de compilación de Visual Studio. Si usas Windows instala primero <a href="https://cmake.org/download/" target="_blank">CMake</a> y <a href="https://visualstudio.microsoft.com/visual-cpp-build-tools/" target="_blank">Visual C++ Build Tools</a>. En macOS: <code>brew install cmake</code>. En Ubuntu: <code>sudo apt install cmake build-essential</code>.
+      </div>
+    </div>
+  </div>
+
+  <!-- RECURSOS -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num">📚</div>
+      <div><h2>Recursos de Consulta</h2><p>Explora estas fuentes mientras desarrollas el proyecto. No son opcionales — están integradas en las actividades.</p></div>
+    </div>
+    <div class="links-grid">
+      <div class="link-card"><div class="lc-icon">📖</div><div><a href="https://docs.opencv.org/4.x/d6/d00/tutorial_py_root.html" target="_blank"><div class="lc-title">OpenCV Python Docs</div></a><div class="lc-desc">Documentación oficial de OpenCV para Python. Módulos de captura de video y procesamiento de imagen.</div></div></div>
+      <div class="link-card"><div class="lc-icon">🧠</div><div><a href="https://github.com/ageitgey/face_recognition" target="_blank"><div class="lc-title">face_recognition (GitHub)</div></a><div class="lc-desc">Librería de Adam Geitgey. README con ejemplos completos de detección e identificación facial.</div></div></div>
+      <div class="link-card"><div class="lc-icon">🎓</div><div><a href="https://www.pyimagesearch.com/category/face-recognition/" target="_blank"><div class="lc-title">PyImageSearch — Face</div></a><div class="lc-desc">Tutoriales avanzados de visión artificial con explicaciones conceptuales y código.</div></div></div>
+      <div class="link-card"><div class="lc-icon">📐</div><div><a href="https://numpy.org/doc/stable/user/absolute_beginners.html" target="_blank"><div class="lc-title">NumPy para principiantes</div></a><div class="lc-desc">Arreglos, distancias y operaciones vectoriales necesarias para comparar embeddings.</div></div></div>
+      <div class="link-card"><div class="lc-icon">🔬</div><div><a href="https://github.com/serengil/deepface" target="_blank"><div class="lc-title">DeepFace (GitHub)</div></a><div class="lc-desc">Framework de análisis facial profundo. Útil para la sección de reto (emociones, edad, etc.).</div></div></div>
+      <div class="link-card"><div class="lc-icon">📊</div><div><a href="https://scikit-learn.org/stable/modules/neighbors.html" target="_blank"><div class="lc-title">scikit-learn — KNN</div></a><div class="lc-desc">Clasificador K-Nearest Neighbors para identificar identidades por distancia de embedding.</div></div></div>
+    </div>
+  </div>
+
+  <div class="center">
+    <button class="btn btn-p" onclick="showPage('fase1')">Continuar a Fase 1 →</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PÁGINA: FASE 1
+══════════════════════════════════════════ -->
+<div class="page" id="page-fase1">
+<div class="wrap">
+  <div class="phase-banner">
+    <div class="phase-icon">🔭</div>
+    <div>
+      <div class="phase-badge p1">Fase 1</div>
+      <h2>Entorno, Captura y Detección Facial</h2>
+      <p>En esta fase prepararás tu entorno de desarrollo, aprenderás a capturar video con OpenCV, detectarás rostros en tiempo real y construirás el módulo de registro de nuevos usuarios con su base de datos local.</p>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 1.1 -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num">1.1</div>
+      <div><h2>Configuración del Entorno Virtual</h2><p>Un entorno virtual aísla las dependencias del proyecto. Es una práctica profesional esencial.</p></div>
+    </div>
+
+    <div class="box box-info">
+      <div class="box-icon">💡</div>
+      <div class="box-body"><b>¿Por qué entorno virtual?</b>
+        Diferentes proyectos pueden requerir versiones distintas de la misma librería. Un <code>venv</code> evita conflictos y hace tu proyecto reproducible en cualquier máquina.
+      </div>
+    </div>
+
+    <h3>Paso 1 — Crea la carpeta del proyecto y el entorno virtual</h3>
+    <p>Abre VS Code, abre la terminal integrada (<kbd>Ctrl+`</kbd>) y ejecuta:</p>
+    <div class="cblock">
+      <div class="chead"><span class="clang">bash</span><span class="cdesc">Terminal de VS Code</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre><span class="cm"># Crea la carpeta del proyecto</span>
+mkdir reconocimiento_facial
+cd reconocimiento_facial
+
+<span class="cm"># Crea el entorno virtual</span>
+python -m venv venv
+
+<span class="cm"># Activa el entorno virtual</span>
+<span class="cm"># En Windows:</span>
+venv\Scripts\activate
+
+<span class="cm"># En macOS / Linux:</span>
+source venv/bin/activate
+
+<span class="cm"># Verifica que el entorno esté activo (verás (venv) al inicio)</span>
+python --version</pre>
+    </div>
+
+    <h3>Paso 2 — Instala las dependencias</h3>
+    <div class="cblock">
+      <div class="chead"><span class="clang">bash</span><span class="cdesc">Instalar librerías principales</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre>pip install opencv-python face-recognition numpy Pillow</pre>
+    </div>
+
+    <div class="box box-warn">
+      <div class="box-icon">⏳</div>
+      <div class="box-body"><b>La instalación puede tardar varios minutos</b>
+        <code>face-recognition</code> compila <code>dlib</code> desde código fuente. Es normal que tarde 5-15 minutos la primera vez. Si falla en Windows, revisa que tengas CMake y los Build Tools instalados.
+      </div>
+    </div>
+
+    <h3>Paso 3 — Crea el archivo de requerimientos</h3>
+    <div class="cblock">
+      <div class="chead"><span class="clang">bash</span><span class="cdesc">Guardar dependencias para reproducibilidad</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre>pip freeze > requirements.txt</pre>
+    </div>
+
+    <h3>Paso 4 — Estructura del proyecto</h3>
+    <p>Crea esta estructura de carpetas. Puedes hacerlo manualmente en el explorador de VS Code o con los comandos:</p>
+    <div class="cblock">
+      <div class="chead"><span class="clang">bash</span><span class="cdesc">Crear estructura de carpetas</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre>mkdir database
+mkdir database/fotos
+touch database/usuarios.pkl
+touch detector.py
+touch registrar.py
+touch reconocer.py
+touch utils.py
+touch main.py</pre>
+    </div>
+    <div class="box box-ok">
+      <div class="box-icon">✅</div>
+      <div class="box-body"><b>Estructura esperada</b>
+        <pre style="font-size:12px;margin-top:6px;color:var(--text2);">reconocimiento_facial/
+├── venv/
+├── database/
+│   ├── fotos/
+│   └── usuarios.pkl
+├── detector.py
+├── registrar.py
+├── reconocer.py
+├── utils.py
+├── main.py
+└── requirements.txt</pre>
+      </div>
+    </div>
+
+    <!-- Preguntas 1.1 -->
+    <div class="q-block">
+      <h4>🧠 Reflexiona antes de continuar</h4>
+      <div class="q-item">
+        <p>1. ¿Cuál es la diferencia entre instalar una librería con <code>pip install</code> globalmente vs. dentro de un entorno virtual? ¿Por qué importa en un proyecto de equipo?</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Piensa en qué pasa cuando dos proyectos necesitan versiones distintas de OpenCV. ¿Qué sucede si uno necesita la 4.7 y otro la 4.9 instaladas globalmente?</div>
+      </div>
+      <div class="q-item">
+        <p>2. ¿Para qué sirve el archivo <code>requirements.txt</code>? ¿Cómo lo usaría otro desarrollador para reproducir tu entorno?</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Busca qué hace el comando <code>pip install -r requirements.txt</code> y por qué es útil al trabajar en equipo o al desplegar en un servidor.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 1.2 -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num">1.2</div>
+      <div><h2>Captura de Video con OpenCV</h2><p>Aprenderás a abrir la cámara, leer frames y mostrarlos en tiempo real.</p></div>
+    </div>
+
+    <div class="box box-info">
+      <div class="box-icon">📷</div>
+      <div class="box-body"><b>Concepto clave: VideoCapture</b>
+        OpenCV trata la cámara como una fuente de video. Cada llamada a <code>cap.read()</code> devuelve un frame (imagen NumPy) que puedes procesar, modificar y mostrar.
+      </div>
+    </div>
+
+    <h3>Abre <code>detector.py</code> y escribe el siguiente código</h3>
+    <div class="cblock">
+      <div class="chead"><span class="clang">python</span><span class="cdesc">detector.py — Captura básica de cámara</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre><span class="ck">import</span> cv2
+
+<span class="ck">def</span> <span class="cf">iniciar_camara</span>(indice=<span class="ca">0</span>):
+    <span class="cs">"""Abre la cámara y devuelve el objeto VideoCapture."""</span>
+    cap = cv2.VideoCapture(indice)
+    <span class="ck">if not</span> cap.isOpened():
+        <span class="ck">raise</span> RuntimeError(<span class="cs">"No se pudo abrir la cámara. Verifica el índice."</span>)
+    <span class="cm"># Configurar resolución</span>
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, <span class="ca">640</span>)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, <span class="ca">480</span>)
+    <span class="ck">return</span> cap
+
+<span class="ck">def</span> <span class="cf">mostrar_camara</span>():
+    <span class="cs">"""Muestra el feed de la cámara en tiempo real. Presiona 'q' para salir."""</span>
+    cap = iniciar_camara()
+
+    <span class="ck">while True</span>:
+        ret, frame = cap.read()
+        <span class="ck">if not</span> ret:
+            <span class="ck">break</span>
+
+        <span class="cm"># Voltear horizontalmente (efecto espejo, más natural para el usuario)</span>
+        frame = cv2.flip(frame, <span class="ca">1</span>)
+
+        <span class="cm"># Mostrar el frame en una ventana</span>
+        cv2.imshow(<span class="cs">"Cámara — Presiona Q para salir"</span>, frame)
+
+        <span class="cm"># Salir si se presiona 'q'</span>
+        <span class="ck">if</span> cv2.waitKey(<span class="ca">1</span>) & <span class="ca">0xFF</span> == <span class="cf">ord</span>(<span class="cs">'q'</span>):
+            <span class="ck">break</span>
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+<span class="cm"># Prueba directa del módulo</span>
+<span class="ck">if</span> __name__ == <span class="cs">"__main__"</span>:
+    mostrar_camara()</pre>
+    </div>
+
+    <p>Ejecuta el archivo para probar que la cámara funciona:</p>
+    <div class="cblock">
+      <div class="chead"><span class="clang">bash</span><span class="cdesc">Terminal</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre>python detector.py</pre>
+    </div>
+    <div class="box box-ok">
+      <div class="box-icon">✅</div>
+      <div class="box-body"><b>Resultado esperado</b>
+        Debe abrirse una ventana mostrando el video de tu cámara. Presiona <kbd>Q</kbd> para cerrarla.
+      </div>
+    </div>
+
+    <div class="q-block">
+      <h4>🧠 Reflexiona antes de continuar</h4>
+      <div class="q-item">
+        <p>1. ¿Qué devuelve <code>cap.read()</code>? ¿Qué representa cada elemento de la tupla que retorna?</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Busca en la documentación de OpenCV qué significa el flag <code>ret</code> y qué tipo de objeto es <code>frame</code>. ¿Qué dimensiones tiene ese arreglo NumPy para una imagen de 640×480 con 3 canales?</div>
+      </div>
+      <div class="q-item">
+        <p>2. ¿Por qué se usa <code>cv2.waitKey(1)</code> dentro del bucle? ¿Qué pasaría si se omitiera?</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Investiga qué hace <code>waitKey</code> en términos de eventos del sistema de ventanas de OpenCV. Prueba cambiar el valor a 0 o eliminar la línea y observa qué ocurre.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 1.3 -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num">1.3</div>
+      <div><h2>Detección de Rostros en Tiempo Real</h2><p>Usarás la librería <code>face_recognition</code> para localizar rostros en cada frame.</p></div>
+    </div>
+
+    <div class="box box-info">
+      <div class="box-icon">🔍</div>
+      <div class="box-body"><b>¿Cómo funciona la detección facial?</b>
+        <code>face_recognition</code> usa un modelo HOG (Histogram of Oriented Gradients) para detección rápida, o una CNN para mayor precisión. Devuelve las coordenadas de cada rostro detectado como una tupla <code>(top, right, bottom, left)</code>.
+      </div>
+    </div>
+
+    <h3>Agrega estas funciones a <code>detector.py</code></h3>
+    <div class="cblock">
+      <div class="chead"><span class="clang">python</span><span class="cdesc">detector.py — Detección de rostros</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre><span class="ck">import</span> cv2
+<span class="ck">import</span> face_recognition
+
+<span class="ck">def</span> <span class="cf">detectar_rostros</span>(frame, modelo=<span class="cs">"hog"</span>):
+    <span class="cs">"""
+    Detecta ubicaciones de rostros en un frame.
+    modelo: 'hog' (rápido) o 'cnn' (más preciso, requiere GPU)
+    Retorna: lista de tuplas (top, right, bottom, left)
+    """</span>
+    <span class="cm"># face_recognition trabaja con RGB; OpenCV usa BGR</span>
+    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    <span class="cm"># Reducir el frame para acelerar la detección (procesa cada 2 píxeles)</span>
+    rgb_pequeño = cv2.resize(rgb, (<span class="ca">0</span>, <span class="ca">0</span>), fx=<span class="ca">0.5</span>, fy=<span class="ca">0.5</span>)
+
+    ubicaciones = face_recognition.face_locations(rgb_pequeño, model=modelo)
+
+    <span class="cm"># Escalar de vuelta las coordenadas al tamaño original</span>
+    ubicaciones_reales = [
+        (top * <span class="ca">2</span>, right * <span class="ca">2</span>, bottom * <span class="ca">2</span>, left * <span class="ca">2</span>)
+        <span class="ck">for</span> top, right, bottom, left <span class="ck">in</span> ubicaciones
+    ]
+    <span class="ck">return</span> ubicaciones_reales
+
+<span class="ck">def</span> <span class="cf">dibujar_rostros</span>(frame, ubicaciones, etiquetas=<span class="ck">None</span>):
+    <span class="cs">"""
+    Dibuja rectángulos y etiquetas sobre los rostros detectados.
+    etiquetas: lista de strings con los nombres. Si es None, muestra "Detectado".
+    """</span>
+    <span class="ck">for</span> i, (top, right, bottom, left) <span class="ck">in</span> <span class="cf">enumerate</span>(ubicaciones):
+        <span class="cm"># Color del rectángulo</span>
+        color = (<span class="ca">0</span>, <span class="ca">255</span>, <span class="ca">0</span>)  <span class="cm"># Verde (BGR)</span>
+
+        <span class="cm"># Rectángulo alrededor del rostro</span>
+        cv2.rectangle(frame, (left, top), (right, bottom), color, <span class="ca">2</span>)
+
+        <span class="cm"># Etiqueta debajo del rectángulo</span>
+        etiqueta = etiquetas[i] <span class="ck">if</span> etiquetas <span class="ck">else</span> <span class="cs">"Detectado"</span>
+        cv2.rectangle(frame, (left, bottom - <span class="ca">28</span>), (right, bottom), color, cv2.FILLED)
+        cv2.putText(
+            frame, etiqueta,
+            (left + <span class="ca">6</span>, bottom - <span class="ca">8</span>),
+            cv2.FONT_HERSHEY_DUPLEX, <span class="ca">0.6</span>,
+            (<span class="ca">0</span>, <span class="ca">0</span>, <span class="ca">0</span>), <span class="ca">1</span>
+        )
+    <span class="ck">return</span> frame
+
+<span class="ck">def</span> <span class="cf">demo_deteccion</span>():
+    <span class="cs">"""Muestra la cámara con detección de rostros en tiempo real."""</span>
+    cap = iniciar_camara()
+
+    <span class="ck">while True</span>:
+        ret, frame = cap.read()
+        <span class="ck">if not</span> ret:
+            <span class="ck">break</span>
+
+        frame = cv2.flip(frame, <span class="ca">1</span>)
+        ubicaciones = detectar_rostros(frame)
+        frame = dibujar_rostros(frame, ubicaciones)
+
+        <span class="cm"># Mostrar cantidad de rostros detectados</span>
+        texto = <span class="cs">f"Rostros detectados: {len(ubicaciones)}"</span>
+        cv2.putText(frame, texto, (<span class="ca">10</span>, <span class="ca">30</span>),
+                    cv2.FONT_HERSHEY_SIMPLEX, <span class="ca">0.8</span>, (<span class="ca">0</span>, <span class="ca">255</span>, <span class="ca">255</span>), <span class="ca">2</span>)
+
+        cv2.imshow(<span class="cs">"Detección Facial — Q para salir"</span>, frame)
+        <span class="ck">if</span> cv2.waitKey(<span class="ca">1</span>) & <span class="ca">0xFF</span> == <span class="cf">ord</span>(<span class="cs">'q'</span>):
+            <span class="ck">break</span>
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+<span class="ck">if</span> __name__ == <span class="cs">"__main__"</span>:
+    demo_deteccion()</pre>
+    </div>
+
+    <p>Prueba la detección:</p>
+    <div class="cblock">
+      <div class="chead"><span class="clang">bash</span><span class="cdesc">Terminal</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre>python detector.py</pre>
+    </div>
+    <div class="box box-ok">
+      <div class="box-icon">✅</div>
+      <div class="box-body"><b>Resultado esperado</b>
+        Debe aparecer un rectángulo verde alrededor de tu rostro y un contador en la esquina superior izquierda.
+      </div>
+    </div>
+
+    <div class="q-block">
+      <h4>🧠 Reflexiona antes de continuar</h4>
+      <div class="q-item">
+        <p>1. ¿Por qué se convierte el frame de BGR a RGB antes de pasarlo a <code>face_recognition</code>? ¿Qué formato de color usa OpenCV y cuál usa la mayoría de las librerías de ML?</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Investiga la historia de por qué OpenCV invirtió el orden de canales desde sus orígenes. ¿Qué pasa visualmente si usas un frame BGR directamente en face_recognition?</div>
+      </div>
+      <div class="q-item">
+        <p>2. Se reduce el frame al 50% antes de detectar. ¿Cuál es el trade-off entre velocidad y precisión al hacer esto? ¿Cuándo podrías querer usar el frame completo?</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Piensa en sistemas de seguridad de alta definición vs. aplicaciones en dispositivos móviles de bajo costo. ¿Qué prioriza cada uno?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 1.4 -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num">1.4</div>
+      <div><h2>Módulo de Registro de Usuarios</h2><p>Cuando se detecte un rostro desconocido, el sistema podrá registrarlo capturando su foto y nombre.</p></div>
+    </div>
+
+    <div class="box box-info">
+      <div class="box-icon">🗄️</div>
+      <div class="box-body"><b>Estrategia de almacenamiento</b>
+        Guardaremos dos cosas por usuario: (1) la <strong>foto</strong> original en <code>database/fotos/</code> y (2) el <strong>embedding facial</strong> (vector numérico) junto al nombre en <code>database/usuarios.pkl</code>. El embedding es lo que usaremos para comparar identidades.
+      </div>
+    </div>
+
+    <h3>Crea el archivo <code>utils.py</code> con herramientas de persistencia</h3>
+    <div class="cblock">
+      <div class="chead"><span class="clang">python</span><span class="cdesc">utils.py — Guardar y cargar la base de datos</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre><span class="ck">import</span> pickle
+<span class="ck">import</span> os
+
+DB_PATH = <span class="cs">"database/usuarios.pkl"</span>
+
+<span class="ck">def</span> <span class="cf">cargar_base_datos</span>():
+    <span class="cs">"""Carga la base de datos. Devuelve dict vacío si no existe."""</span>
+    <span class="ck">if</span> os.path.exists(DB_PATH) <span class="ck">and</span> os.path.getsize(DB_PATH) > <span class="ca">0</span>:
+        <span class="ck">with</span> <span class="cf">open</span>(DB_PATH, <span class="cs">"rb"</span>) <span class="ck">as</span> f:
+            <span class="ck">return</span> pickle.load(f)
+    <span class="ck">return</span> {}  <span class="cm"># {nombre: [embedding1, embedding2, ...]}</span>
+
+<span class="ck">def</span> <span class="cf">guardar_base_datos</span>(db):
+    <span class="cs">"""Guarda el diccionario de usuarios en disco."""</span>
+    os.makedirs(<span class="cs">"database"</span>, exist_ok=<span class="ck">True</span>)
+    <span class="ck">with</span> <span class="cf">open</span>(DB_PATH, <span class="cs">"wb"</span>) <span class="ck">as</span> f:
+        pickle.dump(db, f)
+    <span class="cf">print</span>(<span class="cs">f"Base de datos guardada: {len(db)} usuario(s)."</span>)
+
+<span class="ck">def</span> <span class="cf">listar_usuarios</span>():
+    <span class="cs">"""Imprime todos los usuarios registrados."""</span>
+    db = cargar_base_datos()
+    <span class="ck">if not</span> db:
+        <span class="cf">print</span>(<span class="cs">"No hay usuarios registrados."</span>)
+        <span class="ck">return</span>
+    <span class="cf">print</span>(<span class="cs">f"\n{'='*30}"</span>)
+    <span class="cf">print</span>(<span class="cs">f"  USUARIOS REGISTRADOS ({len(db)})"</span>)
+    <span class="cf">print</span>(<span class="cs">f"{'='*30}"</span>)
+    <span class="ck">for</span> nombre, embeddings <span class="ck">in</span> db.items():
+        <span class="cf">print</span>(<span class="cs">f"  • {nombre}: {len(embeddings)} muestra(s)"</span>)
+    <span class="cf">print</span>(<span class="cs">f"{'='*30}\n"</span>)
+
+<span class="ck">if</span> __name__ == <span class="cs">"__main__"</span>:
+    listar_usuarios()</pre>
+    </div>
+
+    <h3>Crea el archivo <code>registrar.py</code></h3>
+    <div class="cblock">
+      <div class="chead"><span class="clang">python</span><span class="cdesc">registrar.py — Registro de nuevos usuarios</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre><span class="ck">import</span> cv2
+<span class="ck">import</span> face_recognition
+<span class="ck">import</span> os
+<span class="ck">from</span> detector <span class="ck">import</span> iniciar_camara, detectar_rostros, dibujar_rostros
+<span class="ck">from</span> utils <span class="ck">import</span> cargar_base_datos, guardar_base_datos
+
+FOTOS_DIR = <span class="cs">"database/fotos"</span>
+
+<span class="ck">def</span> <span class="cf">capturar_embedding</span>(frame, ubicacion):
+    <span class="cs">"""
+    Extrae el embedding (vector de 128 dimensiones) de un rostro en el frame.
+    ubicacion: tupla (top, right, bottom, left) del rostro.
+    """</span>
+    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    <span class="cm"># face_encodings necesita la lista de ubicaciones</span>
+    encodings = face_recognition.face_encodings(rgb, [ubicacion])
+    <span class="ck">if</span> encodings:
+        <span class="ck">return</span> encodings[<span class="ca">0</span>]  <span class="cm"># Vector NumPy de 128 floats</span>
+    <span class="ck">return None</span>
+
+<span class="ck">def</span> <span class="cf">guardar_foto_usuario</span>(frame, nombre, muestra_num):
+    <span class="cs">"""Guarda la imagen del registro en disco."""</span>
+    carpeta = os.path.join(FOTOS_DIR, nombre)
+    os.makedirs(carpeta, exist_ok=<span class="ck">True</span>)
+    ruta = os.path.join(carpeta, <span class="cs">f"muestra_{muestra_num}.jpg"</span>)
+    cv2.imwrite(ruta, frame)
+    <span class="cf">print</span>(<span class="cs">f"Foto guardada: {ruta}"</span>)
+
+<span class="ck">def</span> <span class="cf">registrar_usuario</span>():
+    <span class="cs">"""
+    Flujo de registro interactivo:
+    1. Detecta un rostro en la cámara
+    2. Pide el nombre del usuario
+    3. Captura N muestras para mayor precisión
+    4. Guarda embeddings en la base de datos
+    """</span>
+    cap = iniciar_camara()
+    db = cargar_base_datos()
+
+    nombre = input(<span class="cs">"\nIngresa el nombre del nuevo usuario: "</span>).strip()
+    <span class="ck">if not</span> nombre:
+        <span class="cf">print</span>(<span class="cs">"Nombre inválido."</span>)
+        <span class="ck">return</span>
+
+    <span class="ck">if</span> nombre <span class="ck">in</span> db:
+        resp = input(<span class="cs">f"'{nombre}' ya existe. ¿Agregar más muestras? (s/n): "</span>)
+        <span class="ck">if</span> resp.lower() != <span class="cs">'s'</span>:
+            <span class="ck">return</span>
+
+    MUESTRAS_REQUERIDAS = <span class="ca">5</span>
+    muestras_capturadas = <span class="ca">0</span>
+    nuevos_embeddings = []
+
+    <span class="cf">print</span>(<span class="cs">f"\nRegistrando a '{nombre}'. Necesitamos {MUESTRAS_REQUERIDAS} muestras."</span>)
+    <span class="cf">print</span>(<span class="cs">"Presiona ESPACIO cuando tengas el rostro bien encuadrado."</span>)
+    <span class="cf">print</span>(<span class="cs">"Presiona Q para cancelar.\n"</span>)
+
+    <span class="ck">while</span> muestras_capturadas < MUESTRAS_REQUERIDAS:
+        ret, frame = cap.read()
+        <span class="ck">if not</span> ret:
+            <span class="ck">break</span>
+
+        frame = cv2.flip(frame, <span class="ca">1</span>)
+        ubicaciones = detectar_rostros(frame)
+        frame_display = dibujar_rostros(frame.copy(), ubicaciones)
+
+        <span class="cm"># HUD informativo</span>
+        info = <span class="cs">f"Muestras: {muestras_capturadas}/{MUESTRAS_REQUERIDAS} | ESPACIO=capturar Q=cancelar"</span>
+        cv2.putText(frame_display, info, (<span class="ca">10</span>, <span class="ca">25</span>),
+                    cv2.FONT_HERSHEY_SIMPLEX, <span class="ca">0.55</span>, (<span class="ca">255</span>, <span class="ca">255</span>, <span class="ca">0</span>), <span class="ca">1</span>)
+
+        cv2.imshow(<span class="cs">f"Registrando: {nombre}"</span>, frame_display)
+        tecla = cv2.waitKey(<span class="ca">1</span>) & <span class="ca">0xFF</span>
+
+        <span class="ck">if</span> tecla == <span class="cf">ord</span>(<span class="cs">'q'</span>):
+            <span class="cf">print</span>(<span class="cs">"Registro cancelado."</span>)
+            <span class="ck">break</span>
+
+        <span class="ck">if</span> tecla == <span class="cf">ord</span>(<span class="cs">' '</span>) <span class="ck">and</span> ubicaciones:
+            ubicacion = ubicaciones[<span class="ca">0</span>]
+            embedding = capturar_embedding(frame, ubicacion)
+
+            <span class="ck">if</span> embedding <span class="ck">is not None</span>:
+                nuevos_embeddings.append(embedding)
+                guardar_foto_usuario(frame, nombre, muestras_capturadas + <span class="ca">1</span>)
+                muestras_capturadas += <span class="ca">1</span>
+                <span class="cf">print</span>(<span class="cs">f"  ✓ Muestra {muestras_capturadas} capturada."</span>)
+            <span class="ck">else</span>:
+                <span class="cf">print</span>(<span class="cs">"  ✗ No se pudo extraer el embedding. Inténtalo de nuevo."</span>)
+
+        <span class="ck">elif</span> tecla == <span class="cf">ord</span>(<span class="cs">' '</span>) <span class="ck">and not</span> ubicaciones:
+            <span class="cf">print</span>(<span class="cs">"  ✗ No hay rostro detectado en el frame."</span>)
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+    <span class="cm"># Guardar si se obtuvieron muestras</span>
+    <span class="ck">if</span> nuevos_embeddings:
+        <span class="ck">if</span> nombre <span class="ck">not in</span> db:
+            db[nombre] = []
+        db[nombre].extend(nuevos_embeddings)
+        guardar_base_datos(db)
+        <span class="cf">print</span>(<span class="cs">f"\n✅ '{nombre}' registrado con {len(nuevos_embeddings)} muestra(s)."</span>)
+
+<span class="ck">if</span> __name__ == <span class="cs">"__main__"</span>:
+    registrar_usuario()</pre>
+    </div>
+
+    <p>Prueba el registro:</p>
+    <div class="cblock">
+      <div class="chead"><span class="clang">bash</span><span class="cdesc">Terminal</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre>python registrar.py</pre>
+    </div>
+    <div class="box box-ok">
+      <div class="box-icon">✅</div>
+      <div class="box-body"><b>Resultado esperado</b>
+        El sistema te pedirá tu nombre, abrirá la cámara y capturará 5 muestras al presionar ESPACIO. Verifica que se hayan creado archivos en <code>database/fotos/TuNombre/</code> y que <code>database/usuarios.pkl</code> ya no esté vacío.
+      </div>
+    </div>
+
+    <div class="q-block">
+      <h4>🧠 Reflexiona antes de continuar</h4>
+      <div class="q-item">
+        <p>1. ¿Qué es un embedding facial? ¿Por qué es un vector de exactamente 128 dimensiones en <code>face_recognition</code>? ¿Cómo se genera ese vector?</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Investiga la arquitectura <strong>FaceNet</strong> de Google (2015). ¿Qué significa que dos embeddings sean "cercanos" en el espacio vectorial? Busca "face embedding 128 dimensions FaceNet".</div>
+      </div>
+      <div class="q-item">
+        <p>2. El sistema captura 5 muestras en lugar de 1. ¿Por qué ayuda tener múltiples muestras para el reconocimiento posterior? ¿Qué variaciones capturarías para mejorar la robustez?</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Piensa en condiciones de iluminación, ángulos del rostro y expresiones faciales. ¿Cómo afectan al embedding generado?</div>
+      </div>
+      <div class="q-item">
+        <p>3. ¿Qué es <code>pickle</code> y cómo funciona? ¿Cuáles son sus limitaciones de seguridad que deberías conocer en producción?</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Busca "pickle python security vulnerability". ¿Por qué nunca debes cargar un archivo .pkl de una fuente no confiable?</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+    <button class="btn btn-s" onclick="showPage('intro')">← Volver al Inicio</button>
+    <button class="btn btn-g" onclick="showPage('fase2')">Continuar a Fase 2 →</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PÁGINA: FASE 2
+══════════════════════════════════════════ -->
+<div class="page" id="page-fase2">
+<div class="wrap">
+  <div class="phase-banner">
+    <div class="phase-icon">🎯</div>
+    <div>
+      <div class="phase-badge p2">Fase 2</div>
+      <h2>Reconocimiento e Identificación en Tiempo Real</h2>
+      <p>En esta fase implementarás la lógica central del reconocimiento: comparar el embedding del rostro detectado contra la base de datos, determinar la identidad y manejar el flujo completo usuario nuevo / usuario conocido.</p>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2.1 -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num">2.1</div>
+      <div><h2>Motor de Reconocimiento con Umbral de Similitud</h2><p>Aprenderás a comparar embeddings usando distancia euclidiana y a definir un umbral de confianza.</p></div>
+    </div>
+
+    <div class="box box-info">
+      <div class="box-icon">📐</div>
+      <div class="box-body"><b>Concepto clave: Distancia entre embeddings</b>
+        Para comparar dos rostros calculamos la <strong>distancia euclidiana</strong> entre sus vectores de 128 dimensiones. Si la distancia es menor a un umbral (típicamente 0.6), los rostros pertenecen a la misma persona. Menor distancia = mayor similitud.
+      </div>
+    </div>
+
+    <div class="box box-warn">
+      <div class="box-icon">⚠️</div>
+      <div class="box-body"><b>El umbral es crítico</b>
+        Un umbral muy bajo genera muchos falsos negativos (no reconoce al usuario aunque esté registrado). Muy alto genera falsos positivos (confunde personas). El valor por defecto de <code>face_recognition</code> es <strong>0.6</strong>. Lo ajustaremos experimentalmente.
+      </div>
+    </div>
+
+    <h3>Crea el archivo <code>reconocer.py</code></h3>
+    <div class="cblock">
+      <div class="chead"><span class="clang">python</span><span class="cdesc">reconocer.py — Motor de reconocimiento facial</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre><span class="ck">import</span> cv2
+<span class="ck">import</span> face_recognition
+<span class="ck">import</span> numpy <span class="ck">as</span> np
+<span class="ck">from</span> detector <span class="ck">import</span> iniciar_camara, detectar_rostros, dibujar_rostros
+<span class="ck">from</span> utils <span class="ck">import</span> cargar_base_datos
+<span class="ck">from</span> registrar <span class="ck">import</span> capturar_embedding
+
+UMBRAL_RECONOCIMIENTO = <span class="ca">0.55</span>  <span class="cm"># Ajusta este valor según tus pruebas</span>
+
+<span class="ck">def</span> <span class="cf">identificar_rostro</span>(embedding_desconocido, db):
+    <span class="cs">"""
+    Compara un embedding desconocido contra toda la base de datos.
+    
+    Retorna: (nombre, distancia_minima)
+    Si la distancia mínima supera el umbral, retorna ("Desconocido", distancia)
+    """</span>
+    mejor_nombre = <span class="cs">"Desconocido"</span>
+    mejor_distancia = <span class="cf">float</span>(<span class="cs">"inf"</span>)
+
+    <span class="ck">for</span> nombre, embeddings <span class="ck">in</span> db.items():
+        <span class="cm"># Calcular distancias contra todas las muestras de este usuario</span>
+        distancias = face_recognition.face_distance(embeddings, embedding_desconocido)
+        
+        <span class="cm"># Usar la distancia mínima (mejor match) para este usuario</span>
+        dist_min = np.min(distancias)
+
+        <span class="ck">if</span> dist_min < mejor_distancia:
+            mejor_distancia = dist_min
+            mejor_nombre = nombre
+
+    <span class="cm"># Aplicar umbral</span>
+    <span class="ck">if</span> mejor_distancia > UMBRAL_RECONOCIMIENTO:
+        <span class="ck">return</span> <span class="cs">"Desconocido"</span>, mejor_distancia
+
+    <span class="ck">return</span> mejor_nombre, mejor_distancia
+
+<span class="ck">def</span> <span class="cf">procesar_frame_reconocimiento</span>(frame, db):
+    <span class="cs">"""
+    Detecta y reconoce todos los rostros en un frame.
+    Retorna: frame anotado, lista de (nombre, distancia, ubicacion)
+    """</span>
+    ubicaciones = detectar_rostros(frame)
+    resultados = []
+    etiquetas = []
+
+    <span class="ck">if not</span> ubicaciones:
+        <span class="ck">return</span> frame, []
+
+    rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    <span class="cm"># Obtener embeddings para todas las ubicaciones de una vez (más eficiente)</span>
+    rgb_pequeño = cv2.resize(rgb, (<span class="ca">0</span>, <span class="ca">0</span>), fx=<span class="ca">0.5</span>, fy=<span class="ca">0.5</span>)
+    ubicaciones_pequeñas = [(t//<span class="ca">2</span>, r//<span class="ca">2</span>, b//<span class="ca">2</span>, l//<span class="ca">2</span>) <span class="ck">for</span> t, r, b, l <span class="ck">in</span> ubicaciones]
+    encodings = face_recognition.face_encodings(rgb_pequeño, ubicaciones_pequeñas)
+
+    <span class="ck">for</span> i, embedding <span class="ck">in</span> <span class="cf">enumerate</span>(encodings):
+        nombre, distancia = identificar_rostro(embedding, db)
+        confianza = <span class="cf">max</span>(<span class="ca">0</span>, (<span class="ca">1</span> - distancia / UMBRAL_RECONOCIMIENTO) * <span class="ca">100</span>)
+        
+        etiqueta = <span class="cs">f"{nombre} ({confianza:.0f}%)"</span> <span class="ck">if</span> nombre != <span class="cs">"Desconocido"</span> <span class="ck">else</span> <span class="cs">"Desconocido"</span>
+        etiquetas.append(etiqueta)
+        resultados.append((nombre, distancia, ubicaciones[i]))
+
+    frame = dibujar_rostros(frame, ubicaciones, etiquetas)
+    <span class="ck">return</span> frame, resultados</pre>
+    </div>
+
+    <div class="q-block">
+      <h4>🧠 Reflexiona antes de continuar</h4>
+      <div class="q-item">
+        <p>1. ¿Por qué se usa la distancia euclidiana para comparar embeddings faciales? ¿Funcionaría igualmente bien la similitud del coseno? Explica la diferencia conceptual.</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Busca "euclidean distance vs cosine similarity face embeddings". Considera que los embeddings de FaceNet están normalizados a longitud unitaria. ¿Qué implica eso para ambas métricas?</div>
+      </div>
+      <div class="q-item">
+        <p>2. ¿Qué es un falso positivo y un falso negativo en este sistema? ¿En qué aplicación real sería más crítico cada uno? (ej: control de acceso vs. álbum fotográfico personal)</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Piensa en las consecuencias de dejar pasar a alguien que no debe entrar (falso positivo) vs. negarle el acceso a quien sí tiene permiso (falso negativo). ¿Cómo ajustarías el umbral en cada caso?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2.2 -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num">2.2</div>
+      <div><h2>Sistema Principal: Flujo Completo de Identificación</h2><p>Integrarás detección, reconocimiento y registro en un único sistema interactivo con la cámara.</p></div>
+    </div>
+
+    <h3>Crea el archivo <code>main.py</code> — Sistema integrado</h3>
+    <div class="cblock">
+      <div class="chead"><span class="clang">python</span><span class="cdesc">main.py — Sistema completo de reconocimiento facial</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre><span class="ck">import</span> cv2
+<span class="ck">import</span> time
+<span class="ck">from</span> detector <span class="ck">import</span> iniciar_camara
+<span class="ck">from</span> reconocer <span class="ck">import</span> procesar_frame_reconocimiento
+<span class="ck">from</span> registrar <span class="ck">import</span> registrar_usuario
+<span class="ck">from</span> utils <span class="ck">import</span> cargar_base_datos, listar_usuarios
+
+<span class="ck">def</span> <span class="cf">mostrar_menu_overlay</span>(frame, db_size):
+    <span class="cs">"""Dibuja el menú de ayuda sobre el frame."""</span>
+    h, w = frame.shape[:<span class="ca">2</span>]
+    
+    <span class="cm"># Panel semi-transparente</span>
+    overlay = frame.copy()
+    cv2.rectangle(overlay, (<span class="ca">0</span>, h - <span class="ca">90</span>), (w, h), (<span class="ca">0</span>, <span class="ca">0</span>, <span class="ca">0</span>), -<span class="ca">1</span>)
+    cv2.addWeighted(overlay, <span class="ca">0.6</span>, frame, <span class="ca">0.4</span>, <span class="ca">0</span>, frame)
+
+    <span class="cm"># Controles</span>
+    controles = [
+        <span class="cs">f"R = Registrar nuevo usuario  |  L = Listar usuarios  |  Q = Salir"</span>,
+        <span class="cs">f"Usuarios en BD: {db_size}  |  Modo: Reconocimiento activo"</span>
+    ]
+    <span class="ck">for</span> i, texto <span class="ck">in</span> <span class="cf">enumerate</span>(controles):
+        cv2.putText(frame, texto, (<span class="ca">10</span>, h - <span class="ca">65</span> + i * <span class="ca">28</span>),
+                    cv2.FONT_HERSHEY_SIMPLEX, <span class="ca">0.5</span>, (<span class="ca">200</span>, <span class="ca">200</span>, <span class="ca">200</span>), <span class="ca">1</span>)
+    <span class="ck">return</span> frame
+
+<span class="ck">def</span> <span class="cf">mostrar_alerta</span>(frame, mensaje, color=(<span class="ca">0</span>, <span class="ca">255</span>, <span class="ca">0</span>)):
+    <span class="cs">"""Muestra un mensaje de alerta centrado en el frame."""</span>
+    h, w = frame.shape[:<span class="ca">2</span>]
+    tamaño = cv2.getTextSize(mensaje, cv2.FONT_HERSHEY_DUPLEX, <span class="ca">0.9</span>, <span class="ca">2</span>)[<span class="ca">0</span>]
+    x = (w - tamaño[<span class="ca">0</span>]) // <span class="ca">2</span>
+    cv2.putText(frame, mensaje, (x, <span class="ca">60</span>),
+                cv2.FONT_HERSHEY_DUPLEX, <span class="ca">0.9</span>, color, <span class="ca">2</span>)
+    <span class="ck">return</span> frame
+
+<span class="ck">def</span> <span class="cf">ejecutar_sistema</span>():
+    <span class="cs">"""Bucle principal del sistema de reconocimiento facial."""</span>
+    <span class="cf">print</span>(<span class="cs">"\n🎯 Sistema de Reconocimiento Facial — Iniciando...\n"</span>)
+    
+    cap = iniciar_camara()
+    db = cargar_base_datos()
+    
+    alerta_texto = <span class="cs">""</span>
+    alerta_tiempo = <span class="ca">0</span>
+    ALERTA_DURACION = <span class="ca">2.5</span>  <span class="cm"># segundos</span>
+    
+    <span class="cm"># Control de FPS para evitar sobrecarga</span>
+    ultimo_proceso = <span class="ca">0</span>
+    INTERVALO_PROCESO = <span class="ca">0.1</span>  <span class="cm"># procesar cada 100ms</span>
+    frame_anotado = <span class="ck">None</span>
+
+    <span class="ck">while True</span>:
+        ret, frame = cap.read()
+        <span class="ck">if not</span> ret:
+            <span class="ck">break</span>
+
+        frame = cv2.flip(frame, <span class="ca">1</span>)
+        ahora = time.time()
+
+        <span class="cm"># Procesar reconocimiento a intervalo controlado</span>
+        <span class="ck">if</span> ahora - ultimo_proceso > INTERVALO_PROCESO:
+            <span class="ck">if</span> db:  <span class="cm"># Solo reconocer si hay usuarios registrados</span>
+                frame_anotado, resultados = procesar_frame_reconocimiento(frame.copy(), db)
+            <span class="ck">else</span>:
+                frame_anotado = frame.copy()
+                cv2.putText(frame_anotado, <span class="cs">"Sin usuarios — Presiona R para registrar"</span>,
+                            (<span class="ca">10</span>, <span class="ca">35</span>), cv2.FONT_HERSHEY_SIMPLEX, <span class="ca">0.65</span>, (<span class="ca">0</span>, <span class="ca">200</span>, <span class="ca">255</span>), <span class="ca">2</span>)
+            ultimo_proceso = ahora
+
+        display = frame_anotado.copy() <span class="ck">if</span> frame_anotado <span class="ck">is not None</span> <span class="ck">else</span> frame.copy()
+
+        <span class="cm"># Mostrar alerta temporal</span>
+        <span class="ck">if</span> alerta_texto <span class="ck">and</span> (ahora - alerta_tiempo) < ALERTA_DURACION:
+            display = mostrar_alerta(display, alerta_texto)
+        <span class="ck">else</span>:
+            alerta_texto = <span class="cs">""</span>
+
+        <span class="cm"># Panel de controles</span>
+        display = mostrar_menu_overlay(display, <span class="cf">len</span>(db))
+        cv2.imshow(<span class="cs">"Sistema de Reconocimiento Facial"</span>, display)
+
+        tecla = cv2.waitKey(<span class="ca">1</span>) & <span class="ca">0xFF</span>
+
+        <span class="ck">if</span> tecla == <span class="cf">ord</span>(<span class="cs">'q'</span>):
+            <span class="cf">print</span>(<span class="cs">"\nCerrando sistema..."</span>)
+            <span class="ck">break</span>
+
+        <span class="ck">elif</span> tecla == <span class="cf">ord</span>(<span class="cs">'r'</span>):
+            <span class="cm"># Pausa la cámara y lanza el registro</span>
+            cap.release()
+            cv2.destroyAllWindows()
+            registrar_usuario()
+            db = cargar_base_datos()  <span class="cm"># Recargar BD actualizada</span>
+            cap = iniciar_camara()
+            frame_anotado = <span class="ck">None</span>
+            alerta_texto = <span class="cs">"✓ Usuario registrado. Sistema reiniciado."</span>
+            alerta_tiempo = time.time()
+
+        <span class="ck">elif</span> tecla == <span class="cf">ord</span>(<span class="cs">'l'</span>):
+            listar_usuarios()
+
+    cap.release()
+    cv2.destroyAllWindows()
+    <span class="cf">print</span>(<span class="cs">"Sistema cerrado correctamente."</span>)
+
+<span class="ck">if</span> __name__ == <span class="cs">"__main__"</span>:
+    ejecutar_sistema()</pre>
+    </div>
+
+    <p>Ejecuta el sistema completo:</p>
+    <div class="cblock">
+      <div class="chead"><span class="clang">bash</span><span class="cdesc">Terminal</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre>python main.py</pre>
+    </div>
+    <div class="box box-ok">
+      <div class="box-icon">✅</div>
+      <div class="box-body"><b>Sistema funcional esperado</b>
+        <ul style="margin-top:6px;">
+          <li>Si no hay usuarios, te indica que presiones <kbd>R</kbd> para registrar.</li>
+          <li>Presiona <kbd>R</kbd> para registrar un usuario nuevo sin cerrar el sistema.</li>
+          <li>Una vez registrado, el sistema reconoce automáticamente tu rostro con un porcentaje de confianza.</li>
+          <li>Presiona <kbd>L</kbd> para listar usuarios en la terminal.</li>
+          <li>Registra a 2 o 3 compañeros y verifica que el sistema los distingue.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2.3 -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num">2.3</div>
+      <div><h2>Métricas y Evaluación del Sistema</h2><p>Un sistema de reconocimiento sin evaluación no es confiable. Medirás su precisión.</p></div>
+    </div>
+
+    <div class="box box-info">
+      <div class="box-icon">📊</div>
+      <div class="box-body"><b>¿Por qué evaluar?</b>
+        Un sistema puede "parecer" funcionar pero tener alta tasa de error en condiciones específicas (mala iluminación, ángulos distintos, anteojos). Las métricas cuantifican el rendimiento real.
+      </div>
+    </div>
+
+    <h3>Crea el archivo <code>evaluar.py</code></h3>
+    <div class="cblock">
+      <div class="chead"><span class="clang">python</span><span class="cdesc">evaluar.py — Evaluación de precisión del sistema</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre><span class="ck">import</span> face_recognition
+<span class="ck">import</span> numpy <span class="ck">as</span> np
+<span class="ck">import</span> os
+<span class="ck">import</span> cv2
+<span class="ck">from</span> reconocer <span class="ck">import</span> identificar_rostro, UMBRAL_RECONOCIMIENTO
+<span class="ck">from</span> utils <span class="ck">import</span> cargar_base_datos
+
+<span class="ck">def</span> <span class="cf">evaluar_con_fotos_guardadas</span>():
+    <span class="cs">"""
+    Evalúa el sistema usando las fotos de registro como conjunto de prueba.
+    Calcula precisión, matriz de confusión simplificada y errores por usuario.
+    """</span>
+    db = cargar_base_datos()
+    <span class="ck">if not</span> db:
+        <span class="cf">print</span>(<span class="cs">"No hay usuarios registrados."</span>)
+        <span class="ck">return</span>
+
+    total = <span class="ca">0</span>
+    correctos = <span class="ca">0</span>
+    errores = []
+
+    <span class="cf">print</span>(<span class="cs">"\n📊 EVALUANDO SISTEMA...\n"</span>)
+
+    <span class="ck">for</span> nombre_real <span class="ck">in</span> os.listdir(<span class="cs">"database/fotos"</span>):
+        carpeta = os.path.join(<span class="cs">"database/fotos"</span>, nombre_real)
+        fotos = [f <span class="ck">for</span> f <span class="ck">in</span> os.listdir(carpeta) <span class="ck">if</span> f.endswith(<span class="cs">".jpg"</span>)]
+
+        aciertos_usuario = <span class="ca">0</span>
+        <span class="ck">for</span> foto <span class="ck">in</span> fotos:
+            ruta = os.path.join(carpeta, foto)
+            img = face_recognition.load_image_file(ruta)
+            encodings = face_recognition.face_encodings(img)
+
+            <span class="ck">if not</span> encodings:
+                <span class="ck">continue</span>
+
+            nombre_pred, dist = identificar_rostro(encodings[<span class="ca">0</span>], db)
+            total += <span class="ca">1</span>
+
+            <span class="ck">if</span> nombre_pred == nombre_real:
+                correctos += <span class="ca">1</span>
+                aciertos_usuario += <span class="ca">1</span>
+            <span class="ck">else</span>:
+                errores.append((nombre_real, nombre_pred, dist, foto))
+
+        prec_usuario = (aciertos_usuario / <span class="cf">len</span>(fotos) * <span class="ca">100</span>) <span class="ck">if</span> fotos <span class="ck">else</span> <span class="ca">0</span>
+        <span class="cf">print</span>(<span class="cs">f"  {nombre_real}: {aciertos_usuario}/{len(fotos)} ({prec_usuario:.0f}%)"</span>)
+
+    precision_global = (correctos / total * <span class="ca">100</span>) <span class="ck">if</span> total > <span class="ca">0</span> <span class="ck">else</span> <span class="ca">0</span>
+    <span class="cf">print</span>(<span class="cs">f"\n{'='*40}"</span>)
+    <span class="cf">print</span>(<span class="cs">f"  Total evaluado:  {total} muestras"</span>)
+    <span class="cf">print</span>(<span class="cs">f"  Correctos:       {correctos}"</span>)
+    <span class="cf">print</span>(<span class="cs">f"  Errores:         {total - correctos}"</span>)
+    <span class="cf">print</span>(<span class="cs">f"  Precisión global: {precision_global:.1f}%"</span>)
+    <span class="cf">print</span>(<span class="cs">f"  Umbral usado:    {UMBRAL_RECONOCIMIENTO}"</span>)
+    <span class="cf">print</span>(<span class="cs">f"{'='*40}\n"</span>)
+
+    <span class="ck">if</span> errores:
+        <span class="cf">print</span>(<span class="cs">"Errores de clasificación:"</span>)
+        <span class="ck">for</span> real, pred, dist, foto <span class="ck">in</span> errores:
+            <span class="cf">print</span>(<span class="cs">f"  Foto: {foto} | Real: {real} → Predicho: {pred} (dist={dist:.3f})"</span>)
+
+<span class="ck">if</span> __name__ == <span class="cs">"__main__"</span>:
+    evaluar_con_fotos_guardadas()</pre>
+    </div>
+
+    <div class="cblock">
+      <div class="chead"><span class="clang">bash</span><span class="cdesc">Terminal</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre>python evaluar.py</pre>
+    </div>
+
+    <div class="q-block">
+      <h4>🧠 Reflexiona y experimenta</h4>
+      <div class="q-item">
+        <p>1. Ejecuta la evaluación con el umbral en 0.55, 0.60 y 0.45. Registra los resultados en una tabla. ¿Cómo cambia la precisión? ¿Qué umbral elegirías para un sistema de seguridad vs. uno de entretenimiento?</p>
+        <textarea placeholder="Tabla: Umbral | Precisión | Falsos Positivos | Falsos Negativos..." style="min-height:100px;"></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Modifica el valor de <code>UMBRAL_RECONOCIMIENTO</code> en <code>reconocer.py</code> y vuelve a ejecutar <code>evaluar.py</code> cada vez. El trade-off entre seguridad y conveniencia se llama curva ROC (Receiver Operating Characteristic).</div>
+      </div>
+      <div class="q-item">
+        <p>2. La evaluación usa las mismas fotos del entrenamiento. ¿Es esto una evaluación justa? ¿Cómo diseñarías un conjunto de prueba más riguroso?</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Busca los conceptos de <strong>overfitting</strong> y <strong>data leakage</strong> en machine learning. ¿Qué es un "conjunto de prueba" y por qué debe ser diferente al conjunto de entrenamiento?</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2.4 -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num">2.4</div>
+      <div><h2>Mejoras Finales y Verificación del Sistema</h2><p>Agrega mejoras de robustez y realiza la prueba final del sistema completo.</p></div>
+    </div>
+
+    <h3>Agrega la función de eliminación de usuarios a <code>utils.py</code></h3>
+    <div class="cblock">
+      <div class="chead"><span class="clang">python</span><span class="cdesc">utils.py — Agregar al final del archivo</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre><span class="ck">def</span> <span class="cf">eliminar_usuario</span>(nombre):
+    <span class="cs">"""Elimina un usuario de la base de datos."""</span>
+    <span class="ck">import</span> shutil
+    db = cargar_base_datos()
+    <span class="ck">if</span> nombre <span class="ck">not in</span> db:
+        <span class="cf">print</span>(<span class="cs">f"Usuario '{nombre}' no encontrado."</span>)
+        <span class="ck">return</span>
+    <span class="ck">del</span> db[nombre]
+    guardar_base_datos(db)
+    <span class="cm"># Eliminar carpeta de fotos si existe</span>
+    carpeta = os.path.join(<span class="cs">"database/fotos"</span>, nombre)
+    <span class="ck">if</span> os.path.exists(carpeta):
+        shutil.rmtree(carpeta)
+    <span class="cf">print</span>(<span class="cs">f"✅ Usuario '{nombre}' eliminado correctamente."</span>)</pre>
+    </div>
+
+    <h3>Prueba Final del Sistema Completo</h3>
+    <div class="box box-ai">
+      <div class="box-icon">🤖</div>
+      <div class="box-body"><b>Actividad de validación</b>
+        Antes de continuar al Reto, realiza las siguientes pruebas y documenta los resultados en tu reporte:
+        <ul style="margin-top:6px;">
+          <li>Registra mínimo <strong>3 personas diferentes</strong> (tú y 2 compañeros, o tú con distintas condiciones de iluminación).</li>
+          <li>Verifica que el sistema identifica correctamente a cada persona.</li>
+          <li>Prueba con mala iluminación. ¿Cómo afecta la confianza?</li>
+          <li>Cubre parte de tu rostro con una mano. ¿Aún te reconoce?</li>
+          <li>Ejecuta <code>evaluar.py</code> y documenta la precisión obtenida.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <h4>🧠 Preguntas de Cierre de Fase 2</h4>
+      <div class="q-item">
+        <p>1. El sistema procesa un frame cada 100ms (10 FPS máximo para reconocimiento). ¿Qué estrategias usarías para llegar a 30 FPS sin perder precisión? Investiga "multi-threading OpenCV Python".</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Busca el patrón productor-consumidor con <code>threading.Thread</code> en Python. El hilo principal captura frames; un segundo hilo hace la inferencia. ¿Cómo compartes datos entre hilos de forma segura?</div>
+      </div>
+      <div class="q-item">
+        <p>2. En un sistema de producción con millones de usuarios, buscar en toda la base de datos sería muy lento. ¿Qué estructura de datos o algoritmo usarías para hacer la búsqueda eficiente? (Investiga FAISS o ANN)</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Busca "FAISS Facebook AI similarity search" y "approximate nearest neighbor search". ¿Cuál es la diferencia entre búsqueda exacta y aproximada? ¿Cuándo vale la pena la aproximación?</div>
+      </div>
+      <div class="q-item">
+        <p>3. ¿Qué implicaciones éticas tiene un sistema de reconocimiento facial? Menciona al menos 3 consideraciones de privacidad o sesgo que deberías tener en cuenta al desplegarlo en un entorno real.</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Investiga el caso de Amazon Rekognition y los estudios de Joy Buolamwini sobre sesgo racial en reconocimiento facial. ¿Qué dice el GDPR europeo sobre datos biométricos?</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;">
+    <button class="btn btn-s" onclick="showPage('fase1')">← Volver a Fase 1</button>
+    <button class="btn btn-p" onclick="showPage('reto')">Ver Actividad Reto 🏆</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PÁGINA: RETO
+══════════════════════════════════════════ -->
+<div class="page" id="page-reto">
+<div class="wrap">
+  <div class="phase-banner" style="border-color:rgba(247,120,186,0.3);">
+    <div class="phase-icon">🏆</div>
+    <div>
+      <div class="phase-badge reto">Actividad Reto — Puntos Extra</div>
+      <h2>Eleva el Sistema de Reconocimiento Facial</h2>
+      <p>Elige <strong>al menos una</strong> de las siguientes funcionalidades para agregar puntos extra a tu calificación final. Cada reto amplía el sistema base construido en las Fases 1 y 2. Puedes combinar varios para mayor puntaje.</p>
+    </div>
+  </div>
+
+  <!-- RETO A -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num" style="background:rgba(247,120,186,0.12);border-color:rgba(247,120,186,0.3);color:var(--pink);">A</div>
+      <div><h2>Reconocimiento de Emociones en Tiempo Real</h2><p>Integra DeepFace para detectar la emoción del usuario identificado.</p></div>
+    </div>
+
+    <div class="box box-reto">
+      <div class="box-icon">😊</div>
+      <div class="box-body"><b>¿Qué construirás?</b>
+        Al reconocer un rostro, el sistema también mostrará la emoción predominante (feliz, triste, enojado, sorprendido, neutral) usando el modelo de DeepFace.
+      </div>
+    </div>
+
+    <div class="box box-warn">
+      <div class="box-icon">📦</div>
+      <div class="box-body"><b>Instala DeepFace</b>
+        <code>pip install deepface tf-keras</code> — La primera ejecución descargará modelos automáticamente (~200MB).
+      </div>
+    </div>
+
+    <h3>Investiga antes de codificar</h3>
+    <div class="q-block">
+      <h4>🧠 Reflexión previa obligatoria</h4>
+      <div class="q-item">
+        <p>1. ¿Qué arquitectura de red neuronal usa DeepFace para el análisis de emociones? ¿Es el mismo modelo que usa para reconocimiento facial?</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Revisa el README de DeepFace en GitHub. Busca qué modelos soporta para "facial attribute analysis" y cuál es el diferente para reconocimiento vs. atributos.</div>
+      </div>
+      <div class="q-item">
+        <p>2. ¿Es confiable detectar emociones a partir del rostro? ¿Qué críticas académicas existen sobre este tipo de sistemas?</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Busca "facial expression recognition bias" y el artículo de Lisa Feldman Barrett (2019) sobre emociones y expresiones faciales en Nature Human Behaviour.</div>
+      </div>
+    </div>
+
+    <h3>Implementación: agrega esto a <code>reconocer.py</code></h3>
+    <div class="cblock">
+      <div class="chead"><span class="clang">python</span><span class="cdesc">reconocer.py — Agregar análisis de emociones (Reto A)</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre><span class="ck">from</span> deepface <span class="ck">import</span> DeepFace
+
+<span class="cm"># Mapa de emociones en español</span>
+EMOCIONES_ES = {
+    <span class="cs">"happy"</span>: <span class="cs">"😊 Feliz"</span>, <span class="cs">"sad"</span>: <span class="cs">"😢 Triste"</span>,
+    <span class="cs">"angry"</span>: <span class="cs">"😠 Enojado"</span>, <span class="cs">"surprise"</span>: <span class="cs">"😲 Sorprendido"</span>,
+    <span class="cs">"fear"</span>: <span class="cs">"😨 Miedo"</span>, <span class="cs">"disgust"</span>: <span class="cs">"🤢 Asco"</span>,
+    <span class="cs">"neutral"</span>: <span class="cs">"😐 Neutral"</span>
+}
+
+<span class="ck">def</span> <span class="cf">analizar_emocion</span>(frame, ubicacion):
+    <span class="cs">"""
+    Analiza la emoción del rostro en la ubicación dada.
+    Retorna: string con la emoción dominante en español.
+    """</span>
+    top, right, bottom, left = ubicacion
+    <span class="cm"># Recortar solo el rostro del frame</span>
+    rostro = frame[top:bottom, left:right]
+    <span class="ck">if</span> rostro.size == <span class="ca">0</span>:
+        <span class="ck">return</span> <span class="cs">"Neutral"</span>
+
+    <span class="ck">try</span>:
+        resultado = DeepFace.analyze(
+            rostro,
+            actions=[<span class="cs">"emotion"</span>],
+            enforce_detection=<span class="ck">False</span>,  <span class="cm"># No fallar si no detecta rostro interno</span>
+            silent=<span class="ck">True</span>
+        )
+        emocion_en = resultado[<span class="ca">0</span>][<span class="cs">"dominant_emotion"</span>]
+        <span class="ck">return</span> EMOCIONES_ES.get(emocion_en, emocion_en)
+    <span class="ck">except</span> Exception:
+        <span class="ck">return</span> <span class="cs">"—"</span>
+
+<span class="cm"># Modifica procesar_frame_reconocimiento para incluir emoción:</span>
+<span class="cm"># En el bucle for, después de identificar, agrega:</span>
+<span class="cm">#   emocion = analizar_emocion(frame, ubicaciones[i])</span>
+<span class="cm">#   etiqueta = f"{nombre} | {emocion}"</span></pre>
+    </div>
+
+    <div class="box box-reto">
+      <div class="box-icon">🏆</div>
+      <div class="box-body"><b>Entregable Reto A</b>
+        Captura de pantalla o video del sistema mostrando: nombre del usuario identificado + emoción detectada simultáneamente. Incluye en tu reporte la reflexión sobre la precisión observada y las preguntas contestadas arriba.
+      </div>
+    </div>
+  </div>
+
+  <!-- RETO B -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num" style="background:rgba(247,120,186,0.12);border-color:rgba(247,120,186,0.3);color:var(--pink);">B</div>
+      <div><h2>Historial de Acceso con Timestamps</h2><p>Registra cada reconocimiento en un log con fecha, hora y nivel de confianza.</p></div>
+    </div>
+
+    <div class="box box-reto">
+      <div class="box-icon">📋</div>
+      <div class="box-body"><b>¿Qué construirás?</b>
+        Cada vez que el sistema identifique a un usuario, guardará un registro en un archivo CSV con: nombre, timestamp, confianza, y si fue reconocido o desconocido.
+      </div>
+    </div>
+
+    <div class="q-block">
+      <h4>🧠 Reflexión previa obligatoria</h4>
+      <div class="q-item">
+        <p>1. ¿Qué información mínima debe contener un log de acceso para ser útil en auditoría de seguridad? Piensa en CCTV y sistemas de control de asistencia.</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Investiga estándares de logging en seguridad como ISO 27001. ¿Qué información es necesaria para reconstruir una "cadena de custodia" de eventos?</div>
+      </div>
+    </div>
+
+    <h3>Crea el archivo <code>historial.py</code></h3>
+    <div class="cblock">
+      <div class="chead"><span class="clang">python</span><span class="cdesc">historial.py — Registro de accesos (Reto B)</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre><span class="ck">import</span> csv
+<span class="ck">import</span> os
+<span class="ck">from</span> datetime <span class="ck">import</span> datetime
+
+LOG_PATH = <span class="cs">"database/historial_accesos.csv"</span>
+CAMPOS = [<span class="cs">"timestamp"</span>, <span class="cs">"nombre"</span>, <span class="cs">"confianza_pct"</span>, <span class="cs">"estado"</span>]
+
+<span class="ck">def</span> <span class="cf">registrar_acceso</span>(nombre, distancia, umbral):
+    <span class="cs">"""Guarda un evento de reconocimiento en el historial CSV."""</span>
+    estado = <span class="cs">"IDENTIFICADO"</span> <span class="ck">if</span> nombre != <span class="cs">"Desconocido"</span> <span class="ck">else</span> <span class="cs">"DESCONOCIDO"</span>
+    confianza = <span class="cf">max</span>(<span class="ca">0</span>, (<span class="ca">1</span> - distancia / umbral) * <span class="ca">100</span>)
+    
+    existe = os.path.exists(LOG_PATH)
+    <span class="ck">with</span> <span class="cf">open</span>(LOG_PATH, <span class="cs">"a"</span>, newline=<span class="cs">""</span>, encoding=<span class="cs">"utf-8"</span>) <span class="ck">as</span> f:
+        writer = csv.DictWriter(f, fieldnames=CAMPOS)
+        <span class="ck">if not</span> existe:
+            writer.writeheader()
+        writer.writerow({
+            <span class="cs">"timestamp"</span>: datetime.now().strftime(<span class="cs">"%Y-%m-%d %H:%M:%S"</span>),
+            <span class="cs">"nombre"</span>: nombre,
+            <span class="cs">"confianza_pct"</span>: <span class="cs">f"{confianza:.1f}"</span>,
+            <span class="cs">"estado"</span>: estado
+        })
+
+<span class="ck">def</span> <span class="cf">mostrar_historial</span>(ultimos=<span class="ca">10</span>):
+    <span class="cs">"""Muestra los últimos N accesos registrados."""</span>
+    <span class="ck">if not</span> os.path.exists(LOG_PATH):
+        <span class="cf">print</span>(<span class="cs">"No hay historial de accesos."</span>)
+        <span class="ck">return</span>
+    <span class="ck">with</span> <span class="cf">open</span>(LOG_PATH, <span class="cs">"r"</span>, encoding=<span class="cs">"utf-8"</span>) <span class="ck">as</span> f:
+        filas = <span class="cf">list</span>(csv.DictReader(f))
+    
+    <span class="cf">print</span>(<span class="cs">f"\n{'='*60}"</span>)
+    <span class="cf">print</span>(<span class="cs">f"  HISTORIAL DE ACCESOS — ÚLTIMOS {min(ultimos, len(filas))}"</span>)
+    <span class="cf">print</span>(<span class="cs">f"{'='*60}"</span>)
+    <span class="ck">for</span> fila <span class="ck">in</span> filas[-ultimos:]:
+        icono = <span class="cs">"✓"</span> <span class="ck">if</span> fila[<span class="cs">"estado"</span>] == <span class="cs">"IDENTIFICADO"</span> <span class="ck">else</span> <span class="cs">"?"</span>
+        <span class="cf">print</span>(<span class="cs">f"  {icono} {fila['timestamp']} | {fila['nombre']:15} | {fila['confianza_pct']}%"</span>)
+    <span class="cf">print</span>(<span class="cs">f"{'='*60}\n"</span>)
+
+<span class="cm"># Para integrar en main.py, importa registrar_acceso y llámala</span>
+<span class="cm"># dentro del bucle de reconocimiento cuando se obtenga un resultado.</span></pre>
+    </div>
+
+    <div class="box box-info">
+      <div class="box-icon">💡</div>
+      <div class="box-body"><b>Integración con main.py</b>
+        En <code>main.py</code>, después de obtener los <code>resultados</code> de <code>procesar_frame_reconocimiento</code>, importa y llama <code>registrar_acceso(nombre, distancia, UMBRAL_RECONOCIMIENTO)</code> para cada resultado. Agrega la tecla <kbd>H</kbd> para mostrar el historial.
+      </div>
+    </div>
+  </div>
+
+  <!-- RETO C -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num" style="background:rgba(247,120,186,0.12);border-color:rgba(247,120,186,0.3);color:var(--pink);">C</div>
+      <div><h2>Interfaz Gráfica con Tkinter</h2><p>Reemplaza la ventana de OpenCV por una GUI profesional con controles interactivos.</p></div>
+    </div>
+
+    <div class="box box-reto">
+      <div class="box-icon">🖥️</div>
+      <div class="box-body"><b>¿Qué construirás?</b>
+        Una interfaz con Tkinter que muestra el video en tiempo real, un panel lateral con los usuarios registrados, botones para registrar/eliminar usuarios y una sección de estadísticas.
+      </div>
+    </div>
+
+    <div class="q-block">
+      <h4>🧠 Reflexión previa obligatoria</h4>
+      <div class="q-item">
+        <p>1. ¿Cuál es el problema de ejecutar OpenCV y Tkinter en el mismo hilo? Investiga el concepto de "main thread" en GUIs y cómo se resuelve con <code>threading</code>.</p>
+        <textarea placeholder="Escribe tu respuesta aquí..."></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Busca "Tkinter thread safe" y "OpenCV Tkinter integration Python". El loop de eventos de Tkinter y el bucle de captura de video compiten por el hilo principal.</div>
+      </div>
+    </div>
+
+    <div class="cblock">
+      <div class="chead"><span class="clang">python</span><span class="cdesc">gui.py — Interfaz Tkinter (Reto C) — estructura base</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre><span class="ck">import</span> tkinter <span class="ck">as</span> tk
+<span class="ck">from</span> tkinter <span class="ck">import</span> ttk, messagebox
+<span class="ck">import</span> cv2
+<span class="ck">import</span> threading
+<span class="ck">from</span> PIL <span class="ck">import</span> Image, ImageTk
+<span class="ck">from</span> reconocer <span class="ck">import</span> procesar_frame_reconocimiento
+<span class="ck">from</span> detector <span class="ck">import</span> iniciar_camara
+<span class="ck">from</span> utils <span class="ck">import</span> cargar_base_datos, listar_usuarios
+
+<span class="ck">class</span> <span class="cf">AppReconocimiento</span>:
+    <span class="ck">def</span> <span class="cf">__init__</span>(self, root):
+        self.root = root
+        self.root.title(<span class="cs">"Sistema de Reconocimiento Facial"</span>)
+        self.root.configure(bg=<span class="cs">"#1a1a2e"</span>)
+
+        self.cap = iniciar_camara()
+        self.db = cargar_base_datos()
+        self.activo = <span class="ck">True</span>
+
+        self._construir_ui()
+        self._iniciar_video_thread()
+
+    <span class="ck">def</span> <span class="cf">_construir_ui</span>(self):
+        <span class="cm"># Panel izquierdo — video</span>
+        self.lbl_video = tk.Label(self.root, bg=<span class="cs">"#1a1a2e"</span>)
+        self.lbl_video.grid(row=<span class="ca">0</span>, column=<span class="ca">0</span>, padx=<span class="ca">10</span>, pady=<span class="ca">10</span>)
+
+        <span class="cm"># Panel derecho — controles</span>
+        panel = tk.Frame(self.root, bg=<span class="cs">"#16213e"</span>, padx=<span class="ca">15</span>, pady=<span class="ca">15</span>)
+        panel.grid(row=<span class="ca">0</span>, column=<span class="ca">1</span>, sticky=<span class="cs">"ns"</span>, padx=<span class="ca">10</span>)
+
+        tk.Label(panel, text=<span class="cs">"RECONOCIMIENTO FACIAL"</span>,
+                 bg=<span class="cs">"#16213e"</span>, fg=<span class="cs">"#e94560"</span>,
+                 font=(<span class="cs">"Courier"</span>, <span class="ca">12</span>, <span class="cs">"bold"</span>)).pack(pady=(<span class="ca">0</span>, <span class="ca">15</span>))
+
+        <span class="cm"># Botones</span>
+        tk.Button(panel, text=<span class="cs">"➕ Registrar Usuario"</span>,
+                  command=self._registrar,
+                  bg=<span class="cs">"#0f3460"</span>, fg=<span class="cs">"white"</span>,
+                  font=(<span class="cs">"Courier"</span>, <span class="ca">10</span>), relief=<span class="cs">"flat"</span>,
+                  padx=<span class="ca">10</span>, pady=<span class="ca">8</span>).pack(fill=<span class="cs">"x"</span>, pady=<span class="ca">4</span>)
+
+        tk.Button(panel, text=<span class="cs">"📋 Ver Usuarios"</span>,
+                  command=self._listar,
+                  bg=<span class="cs">"#0f3460"</span>, fg=<span class="cs">"white"</span>,
+                  font=(<span class="cs">"Courier"</span>, <span class="ca">10</span>), relief=<span class="cs">"flat"</span>,
+                  padx=<span class="ca">10</span>, pady=<span class="ca">8</span>).pack(fill=<span class="cs">"x"</span>, pady=<span class="ca">4</span>)
+
+        <span class="cm"># Status</span>
+        self.lbl_status = tk.Label(panel, text=<span class="cs">"Sistema activo"</span>,
+                                    bg=<span class="cs">"#16213e"</span>, fg=<span class="cs">"#4ecca3"</span>,
+                                    font=(<span class="cs">"Courier"</span>, <span class="ca">9</span>), wraplength=<span class="ca">180</span>)
+        self.lbl_status.pack(pady=(<span class="ca">20</span>, <span class="ca">0</span>))
+
+        self.root.protocol(<span class="cs">"WM_DELETE_WINDOW"</span>, self._cerrar)
+
+    <span class="ck">def</span> <span class="cf">_iniciar_video_thread</span>(self):
+        <span class="ck">def</span> <span class="cf">loop</span>():
+            <span class="ck">while</span> self.activo:
+                ret, frame = self.cap.read()
+                <span class="ck">if not</span> ret:
+                    <span class="ck">break</span>
+                frame = cv2.flip(frame, <span class="ca">1</span>)
+                <span class="ck">if</span> self.db:
+                    frame, _ = procesar_frame_reconocimiento(frame, self.db)
+                <span class="cm"># Convertir a formato Tkinter</span>
+                img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                img = Image.fromarray(img)
+                img = ImageTk.PhotoImage(image=img)
+                self.lbl_video.configure(image=img)
+                self.lbl_video.image = img
+        threading.Thread(target=loop, daemon=<span class="ck">True</span>).start()
+
+    <span class="ck">def</span> <span class="cf">_registrar</span>(self):
+        <span class="ck">from</span> registrar <span class="ck">import</span> registrar_usuario
+        self.activo = <span class="ck">False</span>
+        self.cap.release()
+        registrar_usuario()
+        self.db = cargar_base_datos()
+        self.cap = iniciar_camara()
+        self.activo = <span class="ck">True</span>
+        self._iniciar_video_thread()
+
+    <span class="ck">def</span> <span class="cf">_listar</span>(self):
+        db = cargar_base_datos()
+        nombres = <span class="cs">"\n"</span>.join([<span class="cs">f"• {n} ({len(e)} muestras)"</span> <span class="ck">for</span> n, e <span class="ck">in</span> db.items()])
+        messagebox.showinfo(<span class="cs">"Usuarios registrados"</span>, nombres <span class="ck">or</span> <span class="cs">"Sin usuarios"</span>)
+
+    <span class="ck">def</span> <span class="cf">_cerrar</span>(self):
+        self.activo = <span class="ck">False</span>
+        self.cap.release()
+        self.root.destroy()
+
+<span class="ck">if</span> __name__ == <span class="cs">"__main__"</span>:
+    root = tk.Tk()
+    app = AppReconocimiento(root)
+    root.mainloop()</pre>
+    </div>
+  </div>
+
+  <!-- RETO D -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num" style="background:rgba(247,120,186,0.12);border-color:rgba(247,120,186,0.3);color:var(--pink);">D</div>
+      <div><h2>Detección de Vivacidad (Anti-Spoofing básico)</h2><p>Evita que el sistema sea engañado con una foto impresa o en pantalla.</p></div>
+    </div>
+
+    <div class="box box-reto">
+      <div class="box-icon">🔒</div>
+      <div class="box-body"><b>¿Qué construirás?</b>
+        Un módulo que detecta parpadeo ocular para verificar que el rostro frente a la cámara es real (no una foto). Basado en el Eye Aspect Ratio (EAR) con landmarks faciales de dlib.
+      </div>
+    </div>
+
+    <div class="box box-warn">
+      <div class="box-icon">📦</div>
+      <div class="box-body"><b>Descarga el modelo de landmarks</b>
+        Necesitas el archivo <code>shape_predictor_68_face_landmarks.dat</code>. Descárgalo de: <a href="http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2" target="_blank">dlib.net</a> o busca "shape_predictor_68_face_landmarks download". Colócalo en la raíz del proyecto.
+      </div>
+    </div>
+
+    <div class="q-block">
+      <h4>🧠 Reflexión previa obligatoria</h4>
+      <div class="q-item">
+        <p>1. ¿Qué es el Eye Aspect Ratio (EAR) y por qué permite detectar parpadeo? Dibuja el esquema de los 6 puntos del ojo y escribe la fórmula matemática del EAR.</p>
+        <textarea placeholder="Fórmula: EAR = ... Explica qué sucede con el valor cuando el ojo parpadea..." style="min-height:90px;"></textarea>
+        <button class="reveal-btn" onclick="toggleHint(this)">Ver pista</button>
+        <div class="hint">Busca el paper de Soukupová & Čech (2016): "Real-Time Eye Blink Detection using Facial Landmarks". El EAR se calcula con las distancias verticales y horizontal del ojo. Cuando parpadeas, las distancias verticales se reducen a ~0.</div>
+      </div>
+    </div>
+
+    <div class="cblock">
+      <div class="chead"><span class="clang">python</span><span class="cdesc">liveness.py — Detección de parpadeo (Reto D)</span><button class="cbtn" onclick="copyCode(this)">Copiar</button></div>
+      <pre><span class="ck">import</span> dlib
+<span class="ck">import</span> numpy <span class="ck">as</span> np
+<span class="ck">from</span> scipy.spatial <span class="ck">import</span> distance <span class="ck">as</span> dist
+
+<span class="cm"># Índices de landmarks para ojos izquierdo y derecho (modelo 68 puntos)</span>
+OJO_IZQ = (<span class="ca">42</span>, <span class="ca">48</span>)  <span class="cm"># índice inicio y fin en los landmarks</span>
+OJO_DER = (<span class="ca">36</span>, <span class="ca">42</span>)
+
+EAR_UMBRAL = <span class="ca">0.25</span>  <span class="cm"># Debajo de este valor se considera parpadeo</span>
+FRAMES_PARPADEO = <span class="ca">2</span>   <span class="cm"># Frames consecutivos para confirmar parpadeo</span>
+
+predictor = dlib.shape_predictor(<span class="cs">"shape_predictor_68_face_landmarks.dat"</span>)
+detector_dlib = dlib.get_frontal_face_detector()
+
+<span class="ck">def</span> <span class="cf">calcular_ear</span>(ojo_pts):
+    <span class="cs">"""Calcula el Eye Aspect Ratio para un conjunto de 6 puntos del ojo."""</span>
+    A = dist.euclidean(ojo_pts[<span class="ca">1</span>], ojo_pts[<span class="ca">5</span>])
+    B = dist.euclidean(ojo_pts[<span class="ca">2</span>], ojo_pts[<span class="ca">4</span>])
+    C = dist.euclidean(ojo_pts[<span class="ca">0</span>], ojo_pts[<span class="ca">3</span>])
+    <span class="ck">return</span> (A + B) / (<span class="ca">2.0</span> * C)
+
+<span class="ck">class</span> <span class="cf">DetectorVivacidad</span>:
+    <span class="ck">def</span> <span class="cf">__init__</span>(self):
+        self.contador_frames_bajo = <span class="ca">0</span>
+        self.total_parpadeos = <span class="ca">0</span>
+        self.es_vivo = <span class="ck">False</span>
+        self.PARPADEOS_REQUERIDOS = <span class="ca">2</span>  <span class="cm"># Debe parpadear al menos 2 veces</span>
+
+    <span class="ck">def</span> <span class="cf">procesar</span>(self, frame_gray, rect_dlib):
+        <span class="cs">"""
+        Analiza un frame en escala de grises para detectar parpadeo.
+        rect_dlib: rectángulo de dlib del rostro detectado.
+        Retorna: (ear_promedio, es_vivo)
+        """</span>
+        shape = predictor(frame_gray, rect_dlib)
+        pts = np.array([[shape.part(i).x, shape.part(i).y] 
+                        <span class="ck">for</span> i <span class="ck">in</span> <span class="cf">range</span>(<span class="ca">68</span>)])
+
+        ojo_izq_pts = pts[OJO_IZQ[<span class="ca">0</span>]:OJO_IZQ[<span class="ca">1</span>]]
+        ojo_der_pts = pts[OJO_DER[<span class="ca">0</span>]:OJO_DER[<span class="ca">1</span>]]
+
+        ear_izq = calcular_ear(ojo_izq_pts)
+        ear_der = calcular_ear(ojo_der_pts)
+        ear = (ear_izq + ear_der) / <span class="ca">2.0</span>
+
+        <span class="ck">if</span> ear < EAR_UMBRAL:
+            self.contador_frames_bajo += <span class="ca">1</span>
+        <span class="ck">else</span>:
+            <span class="ck">if</span> self.contador_frames_bajo >= FRAMES_PARPADEO:
+                self.total_parpadeos += <span class="ca">1</span>
+                <span class="ck">if</span> self.total_parpadeos >= self.PARPADEOS_REQUERIDOS:
+                    self.es_vivo = <span class="ck">True</span>
+            self.contador_frames_bajo = <span class="ca">0</span>
+
+        <span class="ck">return</span> ear, self.es_vivo</pre>
+    </div>
+
+    <div class="box box-reto">
+      <div class="box-icon">🏆</div>
+      <div class="box-body"><b>Integración con el sistema</b>
+        Modifica <code>main.py</code> para que antes de reconocer a un usuario, el sistema verifique vivacidad. Si el detector no confirma parpadeo en 5 segundos, rechaza la identificación con el mensaje "ALERTA: Posible foto detectada".
+      </div>
+    </div>
+  </div>
+
+  <hr>
+  <div class="box box-reto" style="margin-top:24px;">
+    <div class="box-icon">📌</div>
+    <div class="box-body"><b>Resumen de puntos por Reto</b>
+      <ul style="margin-top:6px;">
+        <li><strong>Reto A</strong> — Reconocimiento de emociones con DeepFace: <em>+1.5 puntos</em></li>
+        <li><strong>Reto B</strong> — Historial CSV con timestamps: <em>+1.0 punto</em></li>
+        <li><strong>Reto C</strong> — Interfaz GUI con Tkinter: <em>+2.0 puntos</em></li>
+        <li><strong>Reto D</strong> — Anti-spoofing con detección de parpadeo: <em>+2.5 puntos</em></li>
+        <li><strong>Combinar 3 o más Retos:</strong> <em>+0.5 puntos adicionales por integración</em></li>
+      </ul>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;">
+    <button class="btn btn-s" onclick="showPage('fase2')">← Volver a Fase 2</button>
+    <button class="btn btn-p" onclick="showPage('entrega')">Ver Rúbrica y Entrega →</button>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PÁGINA: ENTREGA
+══════════════════════════════════════════ -->
+<div class="page" id="page-entrega">
+<div class="wrap">
+  <div class="phase-banner" style="border-color:rgba(63,185,80,0.3);">
+    <div class="phase-icon">📦</div>
+    <div>
+      <div class="phase-badge p2">Entrega Final</div>
+      <h2>Rúbrica, Entregables y Criterios de Evaluación</h2>
+      <p>Tu proyecto final debe cumplir con todos los criterios de la Fase 1 y Fase 2 para obtener la calificación base. Los retos son adicionales y opcionales para puntos extra.</p>
+    </div>
+  </div>
+
+  <!-- CHECKLIST FINAL -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num">✅</div>
+      <div><h2>Checklist de Entrega</h2><p>Verifica que tu proyecto cumpla con todo antes de entregar.</p></div>
+    </div>
+
+    <h3>Código Entregable</h3>
+    <ul class="checklist">
+      <li><input type="checkbox"><label><code>detector.py</code> funcional con captura de cámara y detección de rostros.</label></li>
+      <li><input type="checkbox"><label><code>registrar.py</code> que capture mínimo 5 muestras y guarde embeddings en <code>usuarios.pkl</code>.</label></li>
+      <li><input type="checkbox"><label><code>reconocer.py</code> con motor de identificación por distancia euclidiana y umbral configurable.</label></li>
+      <li><input type="checkbox"><label><code>utils.py</code> con carga/guardado de BD, listar y eliminar usuarios.</label></li>
+      <li><input type="checkbox"><label><code>main.py</code> integrado con todos los módulos y teclas de control (<kbd>R</kbd>, <kbd>L</kbd>, <kbd>Q</kbd>).</label></li>
+      <li><input type="checkbox"><label><code>evaluar.py</code> con reporte de precisión ejecutado con mínimo 3 usuarios.</label></li>
+      <li><input type="checkbox"><label><code>requirements.txt</code> generado con <code>pip freeze</code>.</label></li>
+    </ul>
+
+    <h3 style="margin-top:20px;">Reporte Escrito</h3>
+    <ul class="checklist">
+      <li><input type="checkbox"><label>Portada con nombre completo, número de control, materia y fecha.</label></li>
+      <li><input type="checkbox"><label>Diagrama de arquitectura del sistema (puede ser hecho a mano o con draw.io).</label></li>
+      <li><input type="checkbox"><label>Explicación de qué es un embedding facial y cómo funciona la comparación por distancia.</label></li>
+      <li><input type="checkbox"><label>Tabla de métricas con resultados de <code>evaluar.py</code> (al menos 3 umbrales distintos probados).</label></li>
+      <li><input type="checkbox"><label>Todas las preguntas de reflexión de las Fases 1 y 2 respondidas con profundidad.</label></li>
+      <li><input type="checkbox"><label>Capturas de pantalla del sistema funcionando (detección, registro, reconocimiento).</label></li>
+      <li><input type="checkbox"><label>Sección de conclusiones: qué aprendiste, qué dificultades encontraste, qué mejorarías.</label></li>
+      <li><input type="checkbox"><label>Si realizaste retos: documentación de los retos elegidos con evidencias.</label></li>
+    </ul>
+  </div>
+
+  <!-- RUBRICA -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num">📊</div>
+      <div><h2>Rúbrica de Evaluación</h2><p>El proyecto tiene un valor de 100 puntos base + hasta 7.5 puntos extra por retos.</p></div>
+    </div>
+
+    <table class="rubric-table">
+      <thead>
+        <tr><th>Criterio</th><th>Descripción</th><th>Pts</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Configuración de entorno</strong></td>
+          <td>Entorno virtual creado correctamente, todas las dependencias instaladas, <code>requirements.txt</code> presente y funcional.</td>
+          <td class="pts">10</td>
+        </tr>
+        <tr>
+          <td><strong>Captura y detección</strong></td>
+          <td>La cámara abre correctamente, detecta rostros en tiempo real con rectángulos dibujados y contador visible. Funciona con múltiples rostros simultáneos.</td>
+          <td class="pts">15</td>
+        </tr>
+        <tr>
+          <td><strong>Módulo de registro</strong></td>
+          <td>Captura mínimo 5 muestras por usuario, guarda embeddings y fotos correctamente, maneja el caso de usuario ya existente.</td>
+          <td class="pts">20</td>
+        </tr>
+        <tr>
+          <td><strong>Motor de reconocimiento</strong></td>
+          <td>Identifica correctamente usuarios registrados, muestra porcentaje de confianza, maneja "Desconocido" con umbral configurable.</td>
+          <td class="pts">25</td>
+        </tr>
+        <tr>
+          <td><strong>Sistema integrado</strong></td>
+          <td><code>main.py</code> funciona sin errores, integra registro desde el sistema, teclas operativas, al menos 3 usuarios probados.</td>
+          <td class="pts">10</td>
+        </tr>
+        <tr>
+          <td><strong>Evaluación y métricas</strong></td>
+          <td><code>evaluar.py</code> ejecutado con resultados reales. Tabla comparativa con mínimo 3 valores de umbral probados. Análisis del trade-off.</td>
+          <td class="pts">10</td>
+        </tr>
+        <tr>
+          <td><strong>Preguntas de reflexión</strong></td>
+          <td>Todas las preguntas respondidas con profundidad, evidencia de investigación independiente, respuestas razonadas (no solo copiadas).</td>
+          <td class="pts">10</td>
+        </tr>
+        <tr style="border-top:2px solid var(--border2);">
+          <td><strong>Total base</strong></td>
+          <td></td>
+          <td class="pts">100</td>
+        </tr>
+        <tr style="background:rgba(247,120,186,0.04);">
+          <td><strong>🏆 Reto A — Emociones</strong></td>
+          <td>DeepFace integrado, emoción visible en video, reflexión respondida.</td>
+          <td class="pts-extra">+1.5</td>
+        </tr>
+        <tr style="background:rgba(247,120,186,0.04);">
+          <td><strong>🏆 Reto B — Historial</strong></td>
+          <td>CSV generado correctamente, función mostrar historial operativa.</td>
+          <td class="pts-extra">+1.0</td>
+        </tr>
+        <tr style="background:rgba(247,120,186,0.04);">
+          <td><strong>🏆 Reto C — GUI Tkinter</strong></td>
+          <td>Interfaz gráfica funcional con video en tiempo real y controles de botones.</td>
+          <td class="pts-extra">+2.0</td>
+        </tr>
+        <tr style="background:rgba(247,120,186,0.04);">
+          <td><strong>🏆 Reto D — Anti-spoofing</strong></td>
+          <td>Detección de parpadeo integrada al flujo de reconocimiento, prueba con foto demostrada.</td>
+          <td class="pts-extra">+2.5</td>
+        </tr>
+        <tr style="background:rgba(247,120,186,0.04);">
+          <td><strong>🏆 Bono integración</strong></td>
+          <td>3 o más retos combinados e integrados en un sistema coherente.</td>
+          <td class="pts-extra">+0.5</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- POLITICA AI -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num">🤖</div>
+      <div><h2>Política de Uso de Inteligencia Artificial</h2><p>Lee con atención. El uso inadecuado de IA anula la actividad.</p></div>
+    </div>
+
+    <div class="box box-ai">
+      <div class="box-icon">✅</div>
+      <div class="box-body"><b>Uso permitido de IA</b>
+        <ul>
+          <li>Consultar conceptos que no entiendes (ej. "¿qué es un embedding?").</li>
+          <li>Pedir que te explique un error que no comprendes después de haberlo intentado resolver.</li>
+          <li>Buscar alternativas o mejores prácticas una vez que ya tienes una solución propia.</li>
+          <li>Pedir revisión de tu código que ya escribiste.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="box box-danger">
+      <div class="box-icon">❌</div>
+      <div class="box-body"><b>Uso NO permitido de IA</b>
+        <ul>
+          <li>Pedirle a la IA que escriba tu código directamente sin haber intentado tú primero.</li>
+          <li>Copiar respuestas de la IA para las preguntas de reflexión sin razonar tú mismo.</li>
+          <li>Usar la IA para responder el reporte sin leer las fuentes referenciadas.</li>
+          <li>Entregar código generado íntegramente por IA sin comprenderlo.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="box box-warn">
+      <div class="box-icon">⚠️</div>
+      <div class="box-body"><b>Cómo demostrar tu comprensión</b>
+        El profesor podrá realizar una revisión oral breve donde te preguntará sobre cualquier parte de tu código. Si no puedes explicar lo que entregaste, la calificación será proporcional a lo que puedas demostrar que comprendes.
+      </div>
+    </div>
+  </div>
+
+  <!-- FORMATO DE ENTREGA -->
+  <div class="sec">
+    <div class="sec-hd">
+      <div class="sec-num">📁</div>
+      <div><h2>Formato de Entrega</h2></div>
+    </div>
+    <ul class="checklist">
+      <li><input type="checkbox"><label>Un archivo <code>.zip</code> con nombre: <code>ReconocimientoFacial_NombreApellido_Num.zip</code></label></li>
+      <li><input type="checkbox"><label>El zip debe contener: carpeta del proyecto completa + reporte en PDF.</label></li>
+      <li><input type="checkbox"><label><strong>NO incluir</strong> la carpeta <code>venv/</code> ni modelos pesados en el zip.</label></li>
+      <li><input type="checkbox"><label>El reporte en PDF debe incluir capturas donde se vea tu rostro siendo reconocido por el sistema.</label></li>
+      <li><input type="checkbox"><label>Incluir un <code>README.md</code> con instrucciones para ejecutar tu proyecto en otra computadora.</label></li>
+    </ul>
+  </div>
+
+  <div class="center" style="margin-top:32px;">
+    <button class="btn btn-s" onclick="showPage('reto')">← Ver Retos</button>
+    &nbsp;
+    <button class="btn btn-g" onclick="showPage('intro')">🏠 Ir al Inicio</button>
+  </div>
+</div>
+</div>
+
+<script>
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  const tabs={'intro':0,'fase1':1,'fase2':2,'reto':3,'entrega':4};
+  const btns=document.querySelectorAll('.nav-tab');
+  if(tabs[id]!==undefined) btns[tabs[id]].classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  updateProgress();
+}
+
+function updateProgress(){
+  const pages=['intro','fase1','fase2','reto','entrega'];
+  const active=document.querySelector('.page.active');
+  if(!active)return;
+  const id=active.id.replace('page-','');
+  const idx=pages.indexOf(id);
+  document.getElementById('pfill').style.width=((idx+1)/pages.length*100)+'%';
+}
+
+function toggleHint(btn){
+  const hint=btn.nextElementSibling;
+  hint.classList.toggle('show');
+  btn.textContent=hint.classList.contains('show')?'Ocultar pista':'Ver pista';
+}
+
+function copyCode(btn){
+  const pre=btn.closest('.cblock').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(()=>{
+    const orig=btn.textContent;
+    btn.textContent='✓ Copiado';
+    setTimeout(()=>btn.textContent=orig,1800);
+  }).catch(()=>{
+    btn.textContent='Error';
+    setTimeout(()=>btn.textContent='Copiar',1500);
+  });
+}
+
+// Toggle step cards
+document.querySelectorAll('.step-hd').forEach(hd=>{
+  hd.addEventListener('click',()=>hd.closest('.step').classList.toggle('open'));
+});
+
+updateProgress();
+</script>
+</body>
+</html>
