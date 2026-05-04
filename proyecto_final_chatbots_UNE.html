@@ -1,0 +1,2101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proyecto Final: Arquitectura de Chatbots con IA | UNE</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&family=Fraunces:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #1B2A6B;
+  --navy-d: #0F1A45;
+  --navy-l: #2A3F8F;
+  --red: #C8102E;
+  --red-l: #E8294A;
+  --white: #FFFFFF;
+  --off: #F5F6FA;
+  --g100: #ECEEF7;
+  --g200: #D2D6EC;
+  --g400: #8892BB;
+  --g600: #4A527A;
+  --black: #080D24;
+  --code: #0D1117;
+  --sw: 260px;
+  --green: #1a7a4a;
+  --green-l: #22a262;
+  --amber: #92610a;
+  --amber-l: #f5a623;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Space Grotesk',sans-serif;background:var(--off);color:var(--black);display:flex;min-height:100vh;font-size:15px;line-height:1.6;}
+
+/* ═══ SIDEBAR ═══ */
+#sb{
+  width:var(--sw);min-height:100vh;background:var(--navy-d);
+  position:fixed;top:0;left:0;bottom:0;z-index:100;
+  display:flex;flex-direction:column;overflow-y:auto;
+  border-right:1px solid rgba(255,255,255,0.06);
+}
+.sb-top{padding:22px 18px 16px;border-bottom:1px solid rgba(255,255,255,0.07);}
+.sb-logo{width:100px;height:68px;object-fit:contain;display:block;margin:0 auto 10px;}
+.sb-uni{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--g400);text-align:center;line-height:1.5;}
+.sb-badge{
+  display:block;text-align:center;margin-top:8px;
+  background:var(--red);color:#fff;font-size:9px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;padding:4px 0;border-radius:4px;
+}
+.sb-nav{flex:1;padding:10px 0;}
+.sb-section{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--g400);padding:14px 18px 5px;}
+.sb-item{
+  display:flex;align-items:center;gap:9px;padding:9px 18px;
+  color:var(--g200);font-size:12.5px;font-weight:500;cursor:pointer;
+  border-left:2px solid transparent;transition:all 0.18s;text-decoration:none;
+  line-height:1.3;
+}
+.sb-item:hover{background:rgba(255,255,255,0.05);color:#fff;border-left-color:var(--g400);}
+.sb-item.active{background:rgba(200,16,46,0.14);color:#fff;border-left-color:var(--red);}
+.sb-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.dot-setup{background:#64748b;}
+.dot-s1{background:#3b82f6;}
+.dot-s2{background:#10b981;}
+.dot-s3{background:#8b5cf6;}
+.dot-reto{background:var(--red);}
+.dot-entrega{background:#f59e0b;}
+.sb-pill{
+  margin-left:auto;font-size:8px;font-weight:700;letter-spacing:1px;
+  padding:2px 7px;border-radius:10px;text-transform:uppercase;flex-shrink:0;
+}
+.pill-s1{background:rgba(59,130,246,0.2);color:#93c5fd;}
+.pill-s2{background:rgba(16,185,129,0.2);color:#6ee7b7;}
+.pill-s3{background:rgba(139,92,246,0.2);color:#c4b5fd;}
+.pill-reto{background:rgba(200,16,46,0.2);color:#fca5a5;}
+.sb-footer{padding:14px 18px;border-top:1px solid rgba(255,255,255,0.07);font-size:11px;color:var(--g400);text-align:center;}
+
+/* ═══ MAIN ═══ */
+#main{margin-left:var(--sw);flex:1;min-height:100vh;}
+.page{display:none;animation:fadeIn 0.25s ease;}
+.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* ═══ PROGRESS ═══ */
+.prog-wrap{height:3px;background:var(--g100);position:sticky;top:0;z-index:50;}
+.prog-fill{height:100%;background:var(--red);transition:width 0.4s ease;}
+
+/* ═══ HERO ═══ */
+.hero{
+  background:var(--navy);padding:52px 56px 44px;position:relative;overflow:hidden;
+}
+.hero::after{
+  content:'';position:absolute;bottom:-80px;right:-80px;
+  width:320px;height:320px;border-radius:50%;
+  background:radial-gradient(circle,rgba(200,16,46,0.15) 0%,transparent 70%);
+}
+.hero-phase{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:12px;}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(26px,3.2vw,40px);font-weight:900;color:#fff;line-height:1.1;max-width:680px;position:relative;z-index:1;}
+.hero p{margin-top:14px;color:var(--g200);font-size:14.5px;max-width:600px;line-height:1.75;position:relative;z-index:1;}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px;position:relative;z-index:1;}
+.chip{font-size:11px;font-weight:600;padding:4px 13px;border-radius:20px;letter-spacing:0.3px;}
+.chip-level{background:rgba(200,16,46,0.25);color:#fca5a5;}
+.chip-tool{background:rgba(42,63,143,0.6);color:#a5b4fc;}
+.chip-db{background:rgba(16,185,129,0.2);color:#6ee7b7;}
+.chip-git{background:rgba(255,255,255,0.1);color:#e2e8f0;}
+
+/* ═══ CONTENT ═══ */
+.content{padding:40px 56px 64px;max-width:980px;}
+
+/* ═══ SECTION TITLES ═══ */
+.stitle{
+  font-family:'Fraunces',serif;font-size:21px;font-weight:700;
+  color:var(--navy);margin:40px 0 16px;padding-bottom:10px;
+  border-bottom:2px solid var(--g100);
+}
+.slabel{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--g400);margin-bottom:6px;}
+
+/* ═══ OBJECTIVE BOX ═══ */
+.obj-box{
+  background:#fff;border:1px solid var(--g200);border-left:4px solid var(--navy);
+  border-radius:0 10px 10px 0;padding:20px 24px;margin-bottom:32px;
+  box-shadow:0 2px 10px rgba(27,42,107,0.05);
+}
+.obj-box .obj-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--navy);margin-bottom:7px;}
+.obj-box p{font-size:13.5px;color:var(--g600);line-height:1.75;}
+
+/* ═══ EXPLAIN CARDS ═══ */
+.exp-card{
+  background:#fff;border:1px solid var(--g100);border-radius:10px;
+  padding:18px 22px;margin-bottom:8px;
+  box-shadow:0 1px 6px rgba(27,42,107,0.04);
+}
+.exp-card .ec-n{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:24px;height:24px;background:var(--navy);color:#fff;
+  border-radius:50%;font-size:11px;font-weight:700;margin-bottom:8px;
+}
+.exp-card h4{font-size:13.5px;font-weight:600;color:var(--navy);margin-bottom:5px;}
+.exp-card p{font-size:13px;color:var(--g600);line-height:1.65;}
+
+/* ═══ CODE BLOCKS ═══ */
+.code-wrap{background:var(--code);border-radius:12px;overflow:hidden;margin:18px 0 26px;box-shadow:0 4px 18px rgba(0,0,0,0.22);}
+.code-hdr{
+  background:rgba(255,255,255,0.04);padding:9px 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+}
+.code-title{font-family:'JetBrains Mono',monospace;font-size:11px;color:#7d8590;}
+.copy-btn{
+  background:rgba(200,16,46,0.18);border:1px solid rgba(200,16,46,0.35);
+  color:#fca5a5;font-size:10px;font-weight:600;padding:3px 11px;
+  border-radius:5px;cursor:pointer;font-family:'JetBrains Mono',monospace;
+  transition:all 0.18s;
+}
+.copy-btn:hover{background:var(--red);color:#fff;border-color:var(--red);}
+.copy-btn.ok{background:#166534;color:#bbf7d0;border-color:#166534;}
+pre{margin:0!important;}
+pre code{font-family:'JetBrains Mono',monospace!important;font-size:12.5px!important;padding:18px 20px!important;line-height:1.7!important;}
+code.il{font-family:'JetBrains Mono',monospace;font-size:11.5px;background:var(--g100);color:var(--navy);padding:2px 6px;border-radius:4px;}
+
+/* ═══ ALERT BOXES ═══ */
+.alert{border-radius:10px;padding:14px 18px;margin:18px 0;display:flex;gap:12px;align-items:flex-start;}
+.alert.warn{background:#fefce8;border:1px solid #fde047;}
+.alert.info{background:#eff6ff;border:1px solid #bfdbfe;}
+.alert.ok{background:#f0fdf4;border:1px solid #bbf7d0;}
+.alert.red{background:#fff1f2;border:1px solid #fecdd3;}
+.alert .ai{font-size:16px;flex-shrink:0;margin-top:1px;}
+.alert p{font-size:13px;line-height:1.65;}
+.alert strong{font-weight:600;}
+
+/* ═══ REASONING BLOCK ═══ */
+.reason-block{
+  background:#fff8f9;border:2px solid var(--red);
+  border-radius:12px;padding:22px 26px;margin:26px 0;
+}
+.rb-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;}
+.rb-badge{
+  background:var(--red);color:#fff;font-size:9px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;
+  border-radius:4px;flex-shrink:0;margin-top:3px;
+}
+.rb-info h3{font-size:15px;font-weight:700;color:var(--red);}
+.rb-info p{font-size:11.5px;color:#9f1239;margin-top:2px;}
+.q-item{background:#fff;border:1px solid #fecdd3;border-radius:8px;padding:13px 16px;margin-bottom:8px;}
+.q-item .q-num{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--red);margin-bottom:5px;}
+.q-item p{font-size:13px;color:var(--black);line-height:1.6;}
+textarea.ans{
+  width:100%;margin-top:8px;padding:9px 12px;
+  border:1px solid var(--g200);border-radius:6px;
+  font-family:'Space Grotesk',sans-serif;font-size:12.5px;
+  resize:vertical;min-height:65px;background:var(--off);
+  transition:border-color 0.18s;color:var(--black);
+}
+textarea.ans:focus{outline:none;border-color:var(--navy);background:#fff;}
+.rb-note{font-size:11px;color:#9f1239;margin-top:12px;font-style:italic;}
+
+/* ═══ LINKS GRID ═══ */
+.link-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:14px 0 26px;}
+.lcard{
+  background:#fff;border:1px solid var(--g200);border-radius:10px;
+  padding:13px 15px;text-decoration:none;transition:all 0.18s;
+  display:flex;flex-direction:column;gap:3px;
+}
+.lcard:hover{border-color:var(--navy);box-shadow:0 3px 14px rgba(27,42,107,0.1);transform:translateY(-2px);}
+.lcard .ln{font-size:12.5px;font-weight:600;color:var(--navy);}
+.lcard .ld{font-size:11px;color:var(--g400);}
+
+/* ═══ STEPS LIST ═══ */
+.steps{list-style:none;counter-reset:s;margin:14px 0;}
+.steps li{
+  counter-increment:s;padding:11px 13px 11px 48px;position:relative;
+  margin-bottom:7px;background:#fff;border:1px solid var(--g100);
+  border-radius:8px;font-size:13px;color:var(--g600);line-height:1.6;
+}
+.steps li::before{
+  content:counter(s);position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  width:24px;height:24px;background:var(--navy);color:#fff;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;line-height:24px;text-align:center;
+}
+.steps li strong{color:var(--navy);}
+
+/* ═══ CHECKLIST ═══ */
+.chk{list-style:none;margin:10px 0;}
+.chk li{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:8px 0;border-bottom:1px solid var(--g100);
+  font-size:13px;color:var(--g600);
+}
+.chk li:last-child{border-bottom:none;}
+.chk li input[type=checkbox]{margin-top:3px;accent-color:var(--navy);width:14px;height:14px;flex-shrink:0;}
+
+/* ═══ ARCH DIAGRAM ═══ */
+.arch-box{
+  background:#fff;border:1px solid var(--g200);border-radius:14px;
+  padding:24px;margin:20px 0;overflow-x:auto;
+}
+.arch-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.arch-node{
+  padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;
+  text-align:center;min-width:110px;
+}
+.an-git{background:#1a1a2e;color:#a5b4fc;border:1px solid #4338ca;}
+.an-py{background:#fffbeb;color:#92400e;border:1px solid #fcd34d;}
+.an-db{background:#f0fdf4;color:#166534;border:1px solid #86efac;}
+.an-llm{background:#fdf4ff;color:#7e22ce;border:1px solid #d8b4fe;}
+.an-ci{background:#fff1f2;color:#9f1239;border:1px solid #fecdd3;}
+.arch-arrow{color:var(--g400);font-size:18px;font-weight:300;}
+.arch-label{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--g400);margin-bottom:6px;}
+
+/* ═══ WEEK CARDS ═══ */
+.week-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin:16px 0 28px;}
+.week-card{background:#fff;border:1px solid var(--g200);border-radius:12px;padding:20px;}
+.wc-top{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.wc-badge{
+  font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  padding:3px 10px;border-radius:4px;
+}
+.wc-s1{background:rgba(59,130,246,0.15);color:#1d4ed8;}
+.wc-s2{background:rgba(16,185,129,0.15);color:#065f46;}
+.wc-s3{background:rgba(139,92,246,0.15);color:#5b21b6;}
+.wc-reto{background:rgba(200,16,46,0.15);color:#9f1239;}
+.wc-title{font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--navy);}
+.wc-items{list-style:none;}
+.wc-items li{font-size:12px;color:var(--g600);padding:4px 0;border-bottom:1px solid var(--g100);display:flex;gap:7px;}
+.wc-items li:last-child{border-bottom:none;}
+.wc-items li::before{content:"—";color:var(--g400);flex-shrink:0;}
+
+/* ═══ BRANCH DIAGRAM ═══ */
+.branch-vis{
+  background:var(--code);border-radius:12px;padding:20px 24px;margin:16px 0;
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.9;
+}
+.br-main{color:#79c0ff;}
+.br-s1{color:#7ee787;}
+.br-s2{color:#e3b341;}
+.br-s3{color:#d2a8ff;}
+.br-merge{color:#ff7b72;}
+.br-label{color:#8b949e;}
+
+/* ═══ TABLE ═══ */
+.rubric-table{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 2px 10px rgba(27,42,107,0.05);margin:16px 0;}
+.rubric-table thead tr{background:var(--navy);color:#fff;}
+.rubric-table th{padding:11px 14px;text-align:left;font-weight:600;}
+.rubric-table td{padding:11px 14px;border-bottom:1px solid var(--g100);color:var(--g600);}
+.rubric-table tr:last-child td{border-bottom:none;}
+.rubric-table tr:nth-child(even) td{background:var(--off);}
+.rubric-table .pct{font-weight:700;color:var(--navy);text-align:center;}
+.rubric-table .pct-reto{font-weight:700;color:var(--red);text-align:center;}
+
+/* ═══ MOBILE ═══ */
+#mob-toggle{
+  display:none;position:fixed;top:12px;left:12px;z-index:200;
+  background:var(--navy);color:#fff;border:none;border-radius:8px;
+  width:38px;height:38px;font-size:18px;cursor:pointer;
+  align-items:center;justify-content:center;
+}
+@media(max-width:768px){
+  #sb{transform:translateX(-100%);transition:transform 0.3s;}
+  #sb.open{transform:translateX(0);}
+  #main{margin-left:0;}
+  #mob-toggle{display:flex;}
+  .content{padding:28px 20px 50px;}
+  .hero{padding:50px 20px 32px;}
+}
+.divider{border:none;border-top:1px solid var(--g200);margin:32px 0;}
+</style>
+</head>
+<body>
+
+<button id="mob-toggle" onclick="toggleSB()">&#9776;</button>
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside id="sb">
+  <div class="sb-top">
+    <img src="data:image/webp;base64,UklGRr4nAQBXRUJQVlA4WAoAAAAQAAAAyAkAFAcAQUxQSByWAAAB36a2jRSGJ6f9R6akjogkXLaaYDDguFkAgPGvkRi3bSNJVv9db5KZvb8RMQHkkTmqIOBFr3NluMo1KWBDFtVM1WykFJQ6oZ0lYN2AW5laspgWAgQwpCU7XefcSygqgLKaW7IB2EOoG+qJNU5RVFCGzXxLUkEFAjR1/r0naff//3EaS1JJwu4zoxfPNDnUBfB6zQUMs/nRDpv3RGtz3vWJnZ3TabvBoaORhJyzTQaDA+DQtsGAECjW/6/LqVKpEqJKWxTfb0T/J8BhG0mKlH/c28d8D56NiAnw8P//2kaStekB/C9dqIMLuvGQbzy8q/ves7wz492Zae5qDTZVd7m7q6qLk2KupCipVKCSSoUrzMzkOGYQ/f96OJVK7L9k2eW8lPn9Ivo/AbE9//M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M///M//3eHqmb7M+1WP3rKd12teuA+1WRvFJS0qu/LGJ8eNLyUv6K/iluPpjBtODO39G7VfCyV0/jWs/Hd6FsBYOXNs9lp46mJe9evAriCwvD5Qf25Exlj1bA3YkhaJTmQIfnpmXPkV1cfjgKTcwuLXHrxpriBElFuNCFBEts4oWd9q8QNYO31ErD4fHZ8FHiQHTrHs2cy+n6VZG9Ejl6S/RmS3xfIuferYLFEblUbqDdEs6Nv1BsaKpslcm2Va29HC8x9mSEPqCRT0TBUsj9DHimQcy9fvH67vPJ+rYgNlCuo1jXRUhp2djQULbV6tYKtjSLWV1ew/ObVyxeTBWYPZsg+lenIFCrZn+HBr777/vbde4+mZh8/f/Hqh9WNzXJDkmzuyEmytrVZXH7NpaePZybv37t95dvvLmTIPpXpaBGijEqGBwcvfpe/cu3h2OT8y9erm2UI2fQpSVHfwsbyq6WZ8dG71wq5r85/kSH7VKaiOcgYUDF0p6bxVe/Q9Pz6ynqprommT6s1qsW1d0vzMw/uXP128EyGVJmOuoBy4Jh64WHT6PLWbiyZ1Qy7HC0r2Cyurvzw7MHw+YOZH6vsjZAg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ssnYzuZcbVASyuuiEmpd3QxHUznNpPsFPZdJ7IbXJ2pVWXBVElBbZ9e3IvGsZlj07ZaeS8ci4ZVGVRaKNqov5lc3d2I5zbDoPk09l45Hd9YnaoOyUIkuKqHWuQ2MprKaSfdr6blMcje8PlGrysIhbVTU6pbWzfg+F7G+Wg3IggtLAbW6ZWgzHkMEQMToUuuz0GeyKJTpJVkNNbcux5JvTcBKa/M9VZGJ4M6iHFSftg5tJyC+9/pQU7UakISiT+Sg2tQ6s5NMvH21tblaVWShsl2S1dDj1sV48u2JCDY9UBWZCH/w/x/8z/9/8P+e//f8v+f/P/h/z/9/8D///8H/f/A//+/5f8//e/7/g///4P89///B//z/B///wf/8v+f/P/h/z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//8z//876cMVlA4IHyRAACw9QWdASrJCRUHPlEokkajoqqhIRCYkVAKCWlu/6i6jnsPqfoc5YMPRcad/1PUB+c/VH/C8sdG7xkB4PIt9Y3rPpt5g/on4NfoL/HfZ8WZuj4d/QD+F+85r71/9K/BP9EP4/7B/0f92/Br9D/4f1Bf8v/n34X/oR/HdvH2dXz6+Qdzd37N+IX6AX+Tu/sv9h/gf89/1f8J///TrkPzb+S/vX7e/2T9ofq8tv+B/wH7P/q/68ffLhr5e84/z39o/8n9P/1H64/Mz/Vf6j+kf3n+9fv////xF+uv/V/gf7t/////9gf8X/m/++/xP7e/2r/////8S/93/a/6X3d/2b/r/s//oPgF/Nf6Z/s/8z+9H9M+rb/m/s1/8/hN/X/+X+QHyAf2j++f/z/0++J/wP///8/gj9AL+Rf9L//+uj/0/9T/Nf3k//////T3+t/8X9n//d8j39R/tH/P/P75AP+x/////7gH/w9h3+Afv/7q/mn+f/xf4MfoH/UPsF9g+1f/I/Q/9N/fH9E8mD9AP59+Pd9P7PyS/0XcO7K/5nwtPL7fsdQ6Bfx70HprP6vRe5cv4T0KP7H6y3fF/d//T7H/+G/8/ps/////+/z91f/////iSCVhQB/9ARKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU54Iln92NyBtAbTivkeGpZLmzDFX8x/h5HOdytZ2RXC/5e736713rf2yf5HXbfZoDwndjHOzV07KCW2MQpEddt9krKs2iFXmb0goU2Q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aNinOX2M1+hghCUzaMuXDhuElOeNysESnPG5WCJTnkQje21jhzbgkJopdM61aafepuKhZMjIc8KlpJLp43KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blUIgBfzgcJ5kl/+WaQYPdJyaLOs47TzTx9+JKUAf/QESnPG5WCJTnjcrBEpzijjJZMVLh3l0JhY/Jfp8kCXkREpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KnZHgVg3soFwCzUf6YsMqALKA0mSBS3EkWEKAP/oCJTnjcrBEpzxuVgiU543KwNlYAaeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJThKsmcSvxLjb7p43KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiRf7tcI9N5TiGAXTa9gU/F/pxoCGtW7u3jIaVneU4hgF02Sw3XMM566t3dthL0rO8pxDALpsl1g5stoA/0r7qwHn7iGAXTa9gVfQd17jahdW0NnBUaVneU4hgF02vYFX0rO8pxDALptewKvpWd4+PO1Y7WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG29p8bOcs++2yoqozYTpcNY/nsoq9W+DR4iPzdJJdPBn0g2XqKZN7V/efKc8HQmx7268dT5+29ZcB08HnlFOeNysDVKuZe9G5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnDupxYAgP9XxTnEw/f/6AxJfTD9//oBoRQ2MaWE1XcwelNeA61cTkgISC6kaCTklOeNysESnDukkunjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WBsjd6TklbO40BDdCtPKwRyOfUMBsKAP9Dip/CvuOBuKMR9UU55BSupGgk5JTnjcrBEpw7pJLp43KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgbI3YTxueiW0AfIOtXE5Jt4ww61cTklLZ494BftgMA3g6FaeVgdDxbl8OaBuKbC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ZUKcLy1Hb30bWlu1GQYT1CGzzqpabElNh9TmLr87hj7eUXmynEMAuhwesDH2t1gDT8U2vYFXDH2t4v0PxQ49Xl7MXX53Ch/9STBpy+2fsaXu/I4vXmn4ptewKc/Z//tecyUHGTqwecxSfnSUkAM69ckpzxuVgiU543KwRKc8blYLZS0U543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnjcrBEpzxuVgiU543KwRKc8blYIlOeNysESnPG5WCJTnj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" alt="UNE" class="sb-logo">
+    <div class="sb-uni">Ingenieria en Computacion<br>8vo Semestre</div>
+    <span class="sb-badge">Proyecto Final · 3 Semanas</span>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-section">Inicio</div>
+    <a class="sb-item active" onclick="go('intro')">
+      <span class="sb-dot dot-setup"></span> Presentacion del Proyecto
+    </a>
+    <a class="sb-item" onclick="go('setup')">
+      <span class="sb-dot dot-setup"></span> Configuracion del Entorno
+    </a>
+
+    <div class="sb-section">Semana 1</div>
+    <a class="sb-item" onclick="go('s1-git')">
+      <span class="sb-dot dot-s1"></span> GitHub: Setup del Repositorio
+      <span class="sb-pill pill-s1">S1</span>
+    </a>
+    <a class="sb-item" onclick="go('s1-code')">
+      <span class="sb-dot dot-s1"></span> Fase 1: Chatbot de Reglas + MongoDB
+      <span class="sb-pill pill-s1">S1</span>
+    </a>
+
+    <div class="sb-section">Semana 2</div>
+    <a class="sb-item" onclick="go('s2-git')">
+      <span class="sb-dot dot-s2"></span> GitHub: Rama fase-2 + PR
+      <span class="sb-pill pill-s2">S2</span>
+    </a>
+    <a class="sb-item" onclick="go('s2-code')">
+      <span class="sb-dot dot-s2"></span> Fase 2: NLP con datos reales
+      <span class="sb-pill pill-s2">S2</span>
+    </a>
+
+    <div class="sb-section">Semana 3</div>
+    <a class="sb-item" onclick="go('s3-git')">
+      <span class="sb-dot dot-s3"></span> GitHub Actions: CI del Chatbot
+      <span class="sb-pill pill-s3">S3</span>
+    </a>
+    <a class="sb-item" onclick="go('s3-code')">
+      <span class="sb-dot dot-s3"></span> Fase 3: LLM + RAG desde MongoDB
+      <span class="sb-pill pill-s3">S3</span>
+    </a>
+
+    <div class="sb-section">Cierre</div>
+    <a class="sb-item" onclick="go('reto')">
+      <span class="sb-dot dot-reto"></span> Reto Extra
+      <span class="sb-pill pill-reto">+</span>
+    </a>
+    <a class="sb-item" onclick="go('entrega')">
+      <span class="sb-dot dot-entrega"></span> Rubrica y Entrega Final
+    </a>
+  </nav>
+  <div class="sb-footer">Arquitectura de Chatbots con IA Profunda</div>
+</aside>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main id="main">
+<div class="prog-wrap"><div class="prog-fill" id="pbar" style="width:5%"></div></div>
+
+<!-- ══════════════════════════════════════════════
+     INTRO
+══════════════════════════════════════════════ -->
+<div id="page-intro" class="page active">
+<div class="hero">
+  <div class="hero-phase">Ingenieria en Computacion · UNE · 8vo Semestre</div>
+  <h1>Proyecto Final:<br>Arquitectura de Chatbots<br>con IA Profunda</h1>
+  <p>Un proyecto evolutivo de tres semanas. Construiras un chatbot completo desde cero: logica de reglas, NLP y LLM. Cada fase alimenta a la siguiente a traves de MongoDB. Todo el desarrollo vive en GitHub con ramas, Pull Requests y GitHub Actions.</p>
+  <div class="chips">
+    <span class="chip chip-level">Individual</span>
+    <span class="chip chip-tool">Python 3.10+</span>
+    <span class="chip chip-db">MongoDB</span>
+    <span class="chip chip-git">GitHub + Actions</span>
+  </div>
+</div>
+<div class="content">
+
+  <div class="obj-box">
+    <div class="obj-label">Objetivo General</div>
+    <p>Disenar, desarrollar y versionar un sistema de chatbot completo donde cada componente tecnologico (reglas, NLP, LLM) se construye sobre los datos generados por la etapa anterior. El repositorio de GitHub es el producto final evaluado: su historial de commits, estructura de ramas y documentacion reflejan tu proceso de ingenieria completo.</p>
+  </div>
+
+  <h2 class="stitle">Arquitectura del Proyecto</h2>
+  <div class="arch-box">
+    <div class="arch-label">Flujo de datos entre componentes</div>
+    <div class="arch-row">
+      <div class="arch-node an-py">Chatbot<br>Reglas (S1)</div>
+      <span class="arch-arrow">&#8594;</span>
+      <div class="arch-node an-db">MongoDB<br>conversaciones</div>
+      <span class="arch-arrow">&#8594;</span>
+      <div class="arch-node an-py">Chatbot<br>NLP (S2)</div>
+      <span class="arch-arrow">&#8594;</span>
+      <div class="arch-node an-llm">Chatbot<br>LLM+RAG (S3)</div>
+    </div>
+    <div class="arch-row" style="margin-top:14px;">
+      <div class="arch-node an-git">GitHub<br>Repositorio</div>
+      <span class="arch-arrow">&#8594;</span>
+      <div class="arch-node an-ci">GitHub<br>Actions CI</div>
+      <span class="arch-arrow">&#8594;</span>
+      <div class="arch-node an-git">Ramas + PRs<br>por Fase</div>
+    </div>
+    <p style="font-size:12px;color:var(--g400);margin-top:14px;">Las preguntas reales que los usuarios hacen en la Semana 1 se almacenan en MongoDB. La Semana 2 usa esos datos para entrenar su modelo NLP. La Semana 3 los usa como contexto RAG para el LLM.</p>
+  </div>
+
+  <h2 class="stitle">Mapa de Semanas</h2>
+  <div class="week-grid">
+    <div class="week-card">
+      <div class="wc-top">
+        <span class="wc-badge wc-s1">Semana 1</span>
+      </div>
+      <div class="wc-title">Chatbot de Reglas<br>+ MongoDB</div>
+      <ul class="wc-items" style="margin-top:10px;">
+        <li>Crear repositorio GitHub</li>
+        <li>Rama <code class="il">fase-1</code></li>
+        <li>Chatbot if/else + diccionario</li>
+        <li>Conectar MongoDB Atlas</li>
+        <li>Guardar cada conversacion en DB</li>
+        <li>Primer PR a main</li>
+      </ul>
+    </div>
+    <div class="week-card">
+      <div class="wc-top">
+        <span class="wc-badge wc-s2">Semana 2</span>
+      </div>
+      <div class="wc-title">NLP con Datos<br>Reales de MongoDB</div>
+      <ul class="wc-items" style="margin-top:10px;">
+        <li>Rama <code class="il">fase-2</code> desde fase-1</li>
+        <li>Leer conversaciones de MongoDB</li>
+        <li>Pipeline NLP (NLTK)</li>
+        <li>Modelo TF-IDF entrenado con datos reales</li>
+        <li>Guardar sesiones NLP en DB</li>
+        <li>PR: fase-2 a main</li>
+      </ul>
+    </div>
+    <div class="week-card">
+      <div class="wc-top">
+        <span class="wc-badge wc-s3">Semana 3</span>
+      </div>
+      <div class="wc-title">LLM + RAG<br>+ GitHub Actions</div>
+      <ul class="wc-items" style="margin-top:10px;">
+        <li>Rama <code class="il">fase-3</code></li>
+        <li>LLM via Ollama o API</li>
+        <li>RAG: contexto desde MongoDB</li>
+        <li>Memoria conversacional en DB</li>
+        <li>Configurar GitHub Actions</li>
+        <li>PR final: fase-3 a main</li>
+      </ul>
+    </div>
+    <div class="week-card">
+      <div class="wc-top">
+        <span class="wc-badge wc-reto">Reto Extra</span>
+      </div>
+      <div class="wc-title">Sentimiento<br>+ Vectores</div>
+      <ul class="wc-items" style="margin-top:10px;">
+        <li>Rama <code class="il">feature/sentiment</code></li>
+        <li>Analisis de sentimiento</li>
+        <li>ChromaDB para embeddings</li>
+        <li>Tono adaptativo del bot</li>
+        <li>PR documentado a main</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="alert info">
+    <span class="ai">&#8505;</span>
+    <p><strong>Regla de Oro:</strong> Las Preguntas de Razonamiento Critico deben responderse antes de copiar cualquier bloque de codigo. El historial de commits de tu repositorio debe mostrar avance incremental — un solo commit con todo el codigo al final indica que no trabajaste el proceso.</p>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SETUP
+══════════════════════════════════════════════ -->
+<div id="page-setup" class="page">
+<div class="hero">
+  <div class="hero-phase">Prerequisito · Antes de la Semana 1</div>
+  <h1>Configuracion del Entorno de Desarrollo</h1>
+  <p>Tu entorno debe estar completamente listo antes del primer dia. Verifica cada herramienta antes de continuar.</p>
+  <div class="chips">
+    <span class="chip chip-tool">Python 3.10+</span>
+    <span class="chip chip-tool">VS Code</span>
+    <span class="chip chip-db">MongoDB Atlas</span>
+    <span class="chip chip-git">Git + GitHub CLI</span>
+  </div>
+</div>
+<div class="content">
+
+  <h2 class="stitle">1. Python y Entorno Virtual</h2>
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">terminal</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-bash">python --version        # Requiere 3.10 o superior
+
+mkdir chatbot_proyecto
+cd chatbot_proyecto
+
+python -m venv venv
+# Windows:
+venv\Scripts\activate
+# Mac/Linux:
+source venv/bin/activate
+
+# Instalar todas las dependencias del proyecto
+pip install pymongo python-dotenv nltk scikit-learn
+pip install requests openai textblob chromadb sentence-transformers
+python -m nltk.downloader punkt stopwords punkt_tab</code></pre>
+  </div>
+
+  <h2 class="stitle">2. MongoDB Atlas (Base de Datos en la Nube)</h2>
+  <div class="exp-card">
+    <div class="ec-n">1</div>
+    <h4>¿Por que MongoDB Atlas y no local?</h4>
+    <p>Atlas es la version en la nube de MongoDB. Es gratuita en su tier M0 (512MB, suficiente para el proyecto) y permite que los datos persistan entre sesiones de trabajo sin configurar un servidor local. Ademas, es la opcion usada en entornos de produccion reales.</p>
+  </div>
+  <ul class="steps">
+    <li>Ve a <strong>mongodb.com/cloud/atlas</strong> y crea una cuenta gratuita</li>
+    <li>Crea un cluster <strong>M0 Free</strong> en la region mas cercana (us-east o us-west)</li>
+    <li>En <strong>Database Access</strong>: crea un usuario con password. Guardalo bien.</li>
+    <li>En <strong>Network Access</strong>: agrega tu IP actual (o <strong>0.0.0.0/0</strong> para acceso desde cualquier lugar)</li>
+    <li>En <strong>Connect</strong>: selecciona "Connect your application" y copia el connection string</li>
+  </ul>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">.env — Variables de entorno (NUNCA subir a GitHub)</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-bash">MONGODB_URI=mongodb+srv://usuario:password@cluster0.xxxxx.mongodb.net/chatbot_db
+OPENAI_API_KEY=sk-tu-clave-aqui   # Solo si usas OpenAI en S3</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">terminal — Verificar conexion a MongoDB</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-python">from pymongo import MongoClient
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+client = MongoClient(os.getenv("MONGODB_URI"))
+
+# Intentar un ping para confirmar conexion
+client.admin.command("ping")
+print("Conexion exitosa a MongoDB Atlas!")
+
+# Explorar la base de datos del proyecto
+db = client["chatbot_db"]
+print("Colecciones disponibles:", db.list_collection_names())</code></pre>
+  </div>
+
+  <h2 class="stitle">3. Git y GitHub CLI</h2>
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">terminal</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-bash">git --version        # Requiere 2.x o superior
+gh --version         # GitHub CLI (instalar desde cli.github.com)
+
+# Configurar identidad Git (usa tu correo de GitHub)
+git config --global user.name "Tu Nombre"
+git config --global user.email "tu@email.com"
+
+# Autenticar GitHub CLI
+gh auth login        # Sigue las instrucciones en pantalla</code></pre>
+  </div>
+
+  <div class="alert ok">
+    <span class="ai">&#10003;</span>
+    <p><strong>Checkpoint:</strong> Antes de continuar verifica: (1) Python activo en el venv, (2) MongoDB ping exitoso, (3) <code class="il">gh auth status</code> muestra tu cuenta autenticada.</p>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     S1 GIT
+══════════════════════════════════════════════ -->
+<div id="page-s1-git" class="page">
+<div class="hero" style="background:linear-gradient(135deg,#0f1a45 0%,#1a2a5e 100%);">
+  <div class="hero-phase">Semana 1 — Parte A</div>
+  <h1>GitHub: Estructura del Repositorio y Primera Rama</h1>
+  <p>El repositorio es tu producto. Antes de escribir una sola linea del chatbot, debes tener la estructura de ramas definida. Asi trabajan los equipos de ingenieria de software profesionales.</p>
+  <div class="chips">
+    <span class="chip chip-git">Git Flow</span>
+    <span class="chip chip-git">Branches</span>
+    <span class="chip chip-git">Commits Semanticos</span>
+  </div>
+</div>
+<div class="content">
+
+  <div class="obj-box">
+    <div class="obj-label">Objetivo de esta parte</div>
+    <p>Crear el repositorio en GitHub, establecer la estructura de ramas del proyecto completo y aprender el estandar de commits semanticos que usaras durante las tres semanas.</p>
+  </div>
+
+  <h2 class="stitle">Estrategia de Ramas</h2>
+  <div class="branch-vis">
+<span class="br-label"># Estructura de ramas del proyecto</span>
+
+<span class="br-main">main</span>          <span class="br-label">&lt;-- rama protegida, solo recibe merges via PR</span>
+  |
+  <span class="br-s1">fase-1</span>        <span class="br-label">&lt;-- Semana 1: Chatbot de reglas + MongoDB</span>
+  |
+  <span class="br-s2">fase-2</span>        <span class="br-label">&lt;-- Semana 2: NLP con datos reales (desde fase-1)</span>
+  |
+  <span class="br-s3">fase-3</span>        <span class="br-label">&lt;-- Semana 3: LLM + RAG + Actions (desde fase-2)</span>
+  |
+  <span class="br-merge">feature/reto-sentimiento</span>  <span class="br-label">&lt;-- Opcional: Reto Extra</span>
+
+<span class="br-label"># Flujo de trabajo por semana:</span>
+<span class="br-label"># 1. Crear rama desde la anterior</span>
+<span class="br-label"># 2. Desarrollar y hacer commits frecuentes</span>
+<span class="br-label"># 3. Abrir Pull Request a main</span>
+<span class="br-label"># 4. El PR debe incluir descripcion del trabajo realizado</span>
+  </div>
+
+  <h2 class="stitle">Crear el Repositorio</h2>
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">terminal — Crear repo y estructura inicial</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-bash"># 1. Crear repositorio en GitHub (privado, con README)
+gh repo create chatbot-ia-proyecto --private --clone --add-readme
+cd chatbot-ia-proyecto
+
+# 2. Crear estructura de archivos inicial
+mkdir -p src tests docs .github/workflows
+
+touch src/__init__.py
+touch src/db.py           # Modulo de conexion a MongoDB
+touch src/chatbot_s1.py   # Fase 1
+touch src/chatbot_s2.py   # Fase 2
+touch src/chatbot_s3.py   # Fase 3
+touch tests/test_s1.py
+touch tests/test_s2.py
+touch tests/test_s3.py
+touch .env.example        # Template del .env (SI se sube)
+touch .gitignore
+touch requirements.txt
+
+# 3. Configurar .gitignore
+echo ".env" >> .gitignore
+echo "venv/" >> .gitignore
+echo "__pycache__/" >> .gitignore
+echo "*.pyc" >> .gitignore
+echo "chroma_db/" >> .gitignore
+
+# 4. Primer commit en main
+git add .
+git commit -m "feat: estructura inicial del proyecto"
+git push origin main
+
+# 5. Crear y cambiar a rama fase-1
+git checkout -b fase-1
+git push origin fase-1</code></pre>
+  </div>
+
+  <h2 class="stitle">Estandar de Commits Semanticos</h2>
+  <div class="exp-card">
+    <div class="ec-n">1</div>
+    <h4>¿Por que commits semanticos?</h4>
+    <p>Un commit como "arregle cosas" no le dice nada a nadie. Los commits semanticos tienen un prefijo que indica el tipo de cambio: <code class="il">feat</code> (nueva funcionalidad), <code class="il">fix</code> (correccion), <code class="il">docs</code> (documentacion), <code class="il">test</code> (pruebas), <code class="il">refactor</code> (mejora sin nueva funcionalidad). El evaluador leera tu historial de commits.</p>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">Ejemplos de commits correctos para este proyecto</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-bash">git commit -m "feat(s1): implementar chatbot basado en diccionario"
+git commit -m "feat(db): agregar modulo de conexion a MongoDB Atlas"
+git commit -m "feat(db): guardar conversaciones en coleccion 'sesiones'"
+git commit -m "fix(s1): corregir normalizacion de acentos en espanol"
+git commit -m "docs: actualizar README con instrucciones de instalacion"
+git commit -m "test(s1): agregar prueba unitaria para funcion normalizar()"
+git commit -m "refactor(s1): extraer logica de busqueda a funcion separada"</code></pre>
+  </div>
+
+  <div class="reason-block">
+    <div class="rb-head">
+      <span class="rb-badge">Razonamiento</span>
+      <div class="rb-info">
+        <h3>Preguntas — Semana 1, Parte A</h3>
+        <p>Responde antes de continuar al codigo del chatbot.</p>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta 1</div>
+      <p>¿Por que <code class="il">main</code> esta protegida y solo recibe cambios via Pull Request? ¿Que problemas evita esto en un equipo de desarrollo? ¿Aplica aunque trabajes solo?</p>
+      <textarea class="ans" placeholder="Tu respuesta..."></textarea>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta 2</div>
+      <p>Ejecuta <code class="il">git log --oneline</code> despues de tus primeros commits. ¿Que informacion ves? ¿Como cambiaria la utilidad de ese historial si todos los commits dijeran solo "cambios"?</p>
+      <textarea class="ans" placeholder="Tu respuesta..."></textarea>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta 3</div>
+      <p>¿Cual es la diferencia entre <code class="il">git merge</code> y <code class="il">git rebase</code>? ¿Cual de los dos preserva mejor el historial de trabajo individual? Investiga brevemente.</p>
+      <textarea class="ans" placeholder="Tu respuesta..."></textarea>
+    </div>
+    <div class="rb-note">No avances a la Fase 1 de codigo hasta haber respondido y hecho push de la estructura inicial del repositorio.</div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     S1 CODE
+══════════════════════════════════════════════ -->
+<div id="page-s1-code" class="page">
+<div class="hero" style="background:linear-gradient(135deg,#0f1a45 0%,#1e3a5f 100%);">
+  <div class="hero-phase">Semana 1 — Parte B</div>
+  <h1>Fase 1: Chatbot de Reglas<br>+ Persistencia en MongoDB</h1>
+  <p>Construiras el chatbot mas simple posible y lo conectaras a MongoDB. Cada pregunta que un usuario haga — incluso las que el bot no pueda responder — quedara registrada. Esos datos son el insumo de la Semana 2.</p>
+  <div class="chips">
+    <span class="chip chip-tool">Python</span>
+    <span class="chip chip-db">MongoDB Atlas</span>
+    <span class="chip chip-git">Rama fase-1</span>
+  </div>
+</div>
+<div class="content">
+
+  <div class="obj-box">
+    <div class="obj-label">Objetivo de esta fase</div>
+    <p>Construir el modulo <code class="il">src/db.py</code> (conexion y operaciones MongoDB) y <code class="il">src/chatbot_s1.py</code> (chatbot de reglas). Cada conversacion debe quedar registrada en la coleccion <code class="il">sesiones</code> de MongoDB con su timestamp, el mensaje del usuario, la respuesta del bot y si fue reconocida o no.</p>
+  </div>
+
+  <h2 class="stitle">Paso 1: Modulo de Base de Datos</h2>
+  <div class="exp-card">
+    <div class="ec-n">1</div>
+    <h4>Diseno del esquema de MongoDB</h4>
+    <p>MongoDB es NoSQL: no hay tablas, hay colecciones de documentos JSON. Para este proyecto usaremos dos colecciones: <code class="il">sesiones</code> (cada turno de conversacion) y <code class="il">config</code> (parametros del bot). Disenar el esquema antes de programar es la practica correcta.</p>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">Esquema de documento en MongoDB</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-json">// Coleccion: sesiones
+// Un documento por cada turno de conversacion
+{
+  "_id": ObjectId("..."),          // ID automatico de MongoDB
+  "fase": "s1",                    // Que version del bot respondio
+  "timestamp": ISODate("..."),     // Cuando ocurrio
+  "usuario": "cuanto cuesta",      // Mensaje normalizado del usuario
+  "usuario_raw": "Cuanto cuesta?", // Mensaje original sin normalizar
+  "respuesta": "Nuestros precios van de $100...",
+  "reconocido": true,              // El bot tenia respuesta?
+  "similitud": null,               // null en S1, numero en S2
+  "metodo": "diccionario"          // Como se encontro la respuesta
+}</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">src/db.py — Modulo de conexion y operaciones MongoDB</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-python"># ================================================================
+# src/db.py
+# Modulo centralizado para todas las operaciones con MongoDB.
+# Importa este modulo en chatbot_s1.py, chatbot_s2.py, chatbot_s3.py
+# ================================================================
+from pymongo import MongoClient, ASCENDING
+from datetime import datetime, timezone
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+# ── Conexion ────────────────────────────────────────────────────
+_client = None
+_db = None
+
+def get_db():
+    """
+    Patron Singleton: reutiliza la conexion si ya existe.
+    Conectar a MongoDB es costoso; no lo hagas en cada operacion.
+    """
+    global _client, _db
+    if _client is None:
+        uri = os.getenv("MONGODB_URI")
+        if not uri:
+            raise ValueError("MONGODB_URI no esta definida en .env")
+        _client = MongoClient(uri, serverSelectionTimeoutMS=5000)
+        _db = _client["chatbot_db"]
+        # Crear indice por timestamp para consultas eficientes
+        _db["sesiones"].create_index([("timestamp", ASCENDING)])
+        _db["sesiones"].create_index([("reconocido", ASCENDING)])
+        print("[DB] Conexion a MongoDB establecida.")
+    return _db
+
+
+def guardar_sesion(fase, usuario_raw, usuario_norm, respuesta,
+                   reconocido, similitud=None, metodo="desconocido"):
+    """
+    Guarda un turno de conversacion en la coleccion 'sesiones'.
+
+    Parametros:
+    - fase        : "s1", "s2" o "s3"
+    - usuario_raw : Texto original del usuario
+    - usuario_norm: Texto normalizado usado para buscar respuesta
+    - respuesta   : Lo que el bot respondio
+    - reconocido  : True si el bot tenia respuesta, False si no
+    - similitud   : Puntuacion de similitud (solo en S2 y S3)
+    - metodo      : Como se encontro la respuesta
+    """
+    db = get_db()
+    doc = {
+        "fase": fase,
+        "timestamp": datetime.now(timezone.utc),
+        "usuario_raw": usuario_raw,
+        "usuario": usuario_norm,
+        "respuesta": respuesta,
+        "reconocido": reconocido,
+        "similitud": similitud,
+        "metodo": metodo
+    }
+    resultado = db["sesiones"].insert_one(doc)
+    return str(resultado.inserted_id)
+
+
+def obtener_no_reconocidos(fase="s1", limite=200):
+    """
+    Recupera mensajes que el bot NO pudo responder.
+    Estos son el insumo clave para la Fase 2:
+    muestran que preguntan los usuarios reales.
+
+    Returns: lista de strings (mensajes normalizados)
+    """
+    db = get_db()
+    cursor = db["sesiones"].find(
+        {"fase": fase, "reconocido": False},
+        {"usuario": 1, "usuario_raw": 1, "_id": 0}
+    ).sort("timestamp", ASCENDING).limit(limite)
+    return list(cursor)
+
+
+def obtener_todas_sesiones(fase=None, limite=500):
+    """
+    Recupera sesiones para analisis o entrenamiento del modelo NLP.
+    Si fase=None, devuelve todas las fases.
+    """
+    db = get_db()
+    filtro = {} if fase is None else {"fase": fase}
+    cursor = db["sesiones"].find(filtro).sort(
+        "timestamp", ASCENDING
+    ).limit(limite)
+    return list(cursor)
+
+
+def estadisticas():
+    """
+    Resumen estadistico de las conversaciones almacenadas.
+    Util para el README y la entrega final.
+    """
+    db = get_db()
+    col = db["sesiones"]
+    total = col.count_documents({})
+    reconocidos = col.count_documents({"reconocido": True})
+    pipeline = [
+        {"$group": {"_id": "$fase", "count": {"$sum": 1}}}
+    ]
+    por_fase = {doc["_id"]: doc["count"]
+                for doc in col.aggregate(pipeline)}
+    return {
+        "total": total,
+        "reconocidos": reconocidos,
+        "no_reconocidos": total - reconocidos,
+        "tasa_exito": round(reconocidos/total*100, 1) if total else 0,
+        "por_fase": por_fase
+    }</code></pre>
+  </div>
+
+  <h2 class="stitle">Paso 2: Chatbot de Reglas con Persistencia</h2>
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">src/chatbot_s1.py — Chatbot de Reglas + MongoDB</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-python"># ================================================================
+# src/chatbot_s1.py
+# Chatbot basado en diccionario con persistencia en MongoDB.
+# Rama: fase-1
+# ================================================================
+import re
+from db import guardar_sesion, estadisticas
+
+# ── Base de conocimiento ─────────────────────────────────────────
+# TAREA: Agrega al menos 8 pares propios relacionados con un
+# negocio o servicio de tu eleccion. Documenta en comentarios
+# que negocio escogiste y por que esas preguntas son relevantes.
+BASE = {
+    "hola": "Hola, bienvenido. Como puedo ayudarte?",
+    "adios": "Hasta luego. Fue un placer atenderte.",
+    "precio": "Nuestros productos van de $100 a $500 MXN.",
+    "horario": "Atendemos lunes a viernes de 9am a 6pm.",
+    "direccion": "Estamos en Av. Universidad 123, Guadalajara.",
+    "telefono": "Llamanos al 33-1234-5678.",
+    "garantia": "Todos los productos tienen 1 ano de garantia.",
+    "envio": "Enviamos a toda la republica en 3 a 5 dias habiles.",
+    "devolucion": "Aceptamos devoluciones en 30 dias con ticket.",
+    "gracias": "Con mucho gusto. Hay algo mas en que pueda ayudar?",
+}
+
+REEMPLAZOS_ACENTO = str.maketrans(
+    "aeiouAEIOUáéíóúÁÉÍÓÚüÜñÑ",
+    "aeiouaeiouaeiouaeiouuunn"
+)
+
+def normalizar(texto):
+    """Limpia el texto para comparacion."""
+    texto = texto.lower().strip()
+    texto = texto.translate(REEMPLAZOS_ACENTO)
+    texto = re.sub(r"[^\w\s]", "", texto)
+    return texto
+
+
+def buscar(normalizado):
+    """
+    Dos estrategias de busqueda:
+    1. Match exacto
+    2. Palabra clave contenida en el mensaje
+    Retorna (respuesta, metodo) o (None, None)
+    """
+    if normalizado in BASE:
+        return BASE[normalizado], "exacto"
+    for clave in BASE:
+        if clave in normalizado.split():
+            return BASE[clave], "keyword"
+    return None, None
+
+
+def chatbot_s1(mensaje_raw):
+    """
+    Procesa un mensaje, busca respuesta y guarda en MongoDB.
+    Retorna la respuesta al usuario.
+    """
+    normalizado = normalizar(mensaje_raw)
+    respuesta, metodo = buscar(normalizado)
+
+    if respuesta:
+        reconocido = True
+    else:
+        reconocido = False
+        respuesta = ("No tengo una respuesta para eso. "
+                     "Tu pregunta queda registrada para mejorar el sistema.")
+
+    # Guardar en MongoDB — este paso es CRITICO para la Semana 2
+    doc_id = guardar_sesion(
+        fase="s1",
+        usuario_raw=mensaje_raw,
+        usuario_norm=normalizado,
+        respuesta=respuesta,
+        reconocido=reconocido,
+        metodo=metodo or "sin_match"
+    )
+    print(f"  [DB] Sesion guardada: {doc_id}")
+    return respuesta
+
+
+# ── Prueba ───────────────────────────────────────────────────────
+if __name__ == "__main__":
+    print("Chatbot S1 activo. Escribe 'stats' para ver estadisticas.")
+    print("Escribe 'salir' para terminar.\n")
+    while True:
+        entrada = input("Tu: ").strip()
+        if not entrada:
+            continue
+        if entrada.lower() == "salir":
+            stats = estadisticas()
+            print(f"\nResumen final: {stats}")
+            break
+        if entrada.lower() == "stats":
+            print(estadisticas())
+            continue
+        print(f"Bot: {chatbot_s1(entrada)}\n")</code></pre>
+  </div>
+
+  <h2 class="stitle">Paso 3: Prueba Unitaria y Commit</h2>
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">tests/test_s1.py — Pruebas unitarias de la Fase 1</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-python"># ================================================================
+# tests/test_s1.py
+# Pruebas unitarias para el chatbot de la Semana 1.
+# GitHub Actions ejecutara estas pruebas automaticamente en S3.
+# ================================================================
+import sys, os
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+from chatbot_s1 import normalizar, buscar
+
+def test_normalizar_minusculas():
+    assert normalizar("HOLA") == "hola"
+
+def test_normalizar_acentos():
+    assert normalizar("Cuánto cuesta?") == "cuanto cuesta"
+
+def test_normalizar_espacios():
+    assert normalizar("  hola  ") == "hola"
+
+def test_buscar_exacto():
+    respuesta, metodo = buscar("hola")
+    assert respuesta is not None
+    assert metodo == "exacto"
+
+def test_buscar_keyword():
+    respuesta, metodo = buscar("cual es el precio de todo")
+    assert respuesta is not None
+    assert metodo == "keyword"
+
+def test_buscar_desconocido():
+    respuesta, metodo = buscar("xyz123abc")
+    assert respuesta is None
+    assert metodo is None
+
+if __name__ == "__main__":
+    tests = [test_normalizar_minusculas, test_normalizar_acentos,
+             test_normalizar_espacios, test_buscar_exacto,
+             test_buscar_keyword, test_buscar_desconocido]
+    passed = 0
+    for t in tests:
+        try:
+            t()
+            print(f"  PASS: {t.__name__}")
+            passed += 1
+        except AssertionError as e:
+            print(f"  FAIL: {t.__name__} — {e}")
+    print(f"\n{passed}/{len(tests)} pruebas pasaron.")</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">terminal — Commit y push de la Semana 1</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-bash"># Asegurate de estar en la rama fase-1
+git branch   # Debe mostrar * fase-1
+
+git add src/db.py src/chatbot_s1.py tests/test_s1.py
+git commit -m "feat(s1): chatbot de reglas con persistencia en MongoDB"
+git push origin fase-1
+
+# Abrir Pull Request a main
+gh pr create --base main --head fase-1 \
+  --title "Semana 1: Chatbot de Reglas + MongoDB" \
+  --body "## Que incluye este PR
+
+- Modulo db.py con conexion MongoDB y operaciones CRUD
+- Chatbot basado en diccionario con normalizacion de texto
+- Guardado de cada conversacion (reconocida y no reconocida) en MongoDB
+- Pruebas unitarias para normalizar() y buscar()
+
+## Estadisticas de prueba
+(Pega aqui la salida de stats despues de 10+ conversaciones de prueba)"</code></pre>
+  </div>
+
+  <div class="reason-block">
+    <div class="rb-head">
+      <span class="rb-badge">Razonamiento</span>
+      <div class="rb-info">
+        <h3>Preguntas — Semana 1, Parte B</h3>
+        <p>Responde con evidencia de tus pruebas en MongoDB.</p>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta 4</div>
+      <p>Despues de 15 conversaciones de prueba, entra a MongoDB Atlas y ve la coleccion <code class="il">sesiones</code>. Describe: ¿cuantos documentos hay? ¿Cuantos tienen <code class="il">reconocido: false</code>? ¿Que preguntas no pudo responder el bot?</p>
+      <textarea class="ans" placeholder="Describe lo que ves en MongoDB Atlas..."></textarea>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta 5</div>
+      <p>¿Por que guardamos el <code class="il">usuario_raw</code> (texto original) ademas del <code class="il">usuario</code> (normalizado)? ¿En que escenario es util tener ambos?</p>
+      <textarea class="ans" placeholder="Tu respuesta..."></textarea>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta 6 — Diseno</div>
+      <p>El patron Singleton en <code class="il">get_db()</code> reutiliza la conexion. ¿Que pasaria si crearas una nueva conexion a MongoDB en cada llamada a <code class="il">guardar_sesion()</code>? ¿Que impacto tendria en rendimiento y en los limites de MongoDB Atlas Free?</p>
+      <textarea class="ans" placeholder="Tu respuesta..."></textarea>
+    </div>
+    <div class="rb-note">La Semana 1 esta completa cuando el PR este abierto en GitHub y MongoDB Atlas tenga al menos 15 documentos de prueba.</div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     S2 GIT
+══════════════════════════════════════════════ -->
+<div id="page-s2-git" class="page">
+<div class="hero" style="background:linear-gradient(135deg,#0a2010 0%,#0f3020 100%);">
+  <div class="hero-phase">Semana 2 — Parte A</div>
+  <h1>GitHub: Rama fase-2 y Pull Request Documentado</h1>
+  <p>La rama <code class="il">fase-2</code> se crea desde <code class="il">fase-1</code>, no desde <code class="il">main</code>. Heredas todo el codigo anterior y construyes encima. Aprende a escribir un PR que cuente la historia de tu trabajo.</p>
+  <div class="chips">
+    <span class="chip chip-git">Branch desde fase-1</span>
+    <span class="chip chip-git">PR con contexto</span>
+    <span class="chip chip-git">Diff review</span>
+  </div>
+</div>
+<div class="content">
+
+  <div class="obj-box">
+    <div class="obj-label">Objetivo de esta parte</div>
+    <p>Crear la rama <code class="il">fase-2</code> a partir de <code class="il">fase-1</code> y entender como el historial de Git captura la evolucion del proyecto. Un Pull Request bien documentado demuestra comprension del trabajo realizado, no solo codigo que funciona.</p>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">terminal — Crear rama fase-2 desde fase-1</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-bash"># IMPORTANTE: crear fase-2 DESDE fase-1, no desde main
+# Esto garantiza que heredas el modulo db.py y chatbot_s1.py
+git checkout fase-1
+git pull origin fase-1       # Asegurarse de tener la version mas reciente
+git checkout -b fase-2
+git push origin fase-2
+
+# Verificar que tienes el codigo de la Semana 1
+ls src/
+# Debe mostrar: __init__.py  chatbot_s1.py  db.py</code></pre>
+  </div>
+
+  <h2 class="stitle">Consultar los Datos de Semana 1 desde Git</h2>
+  <div class="exp-card">
+    <div class="ec-n">2</div>
+    <h4>El valor del historial de MongoDB</h4>
+    <p>Antes de programar el NLP, debes analizar que preguntas hicieron los usuarios que el bot no pudo responder. Este analisis guia el diseno del modelo: si 80% de las preguntas no reconocidas son sobre "envios" y "devolucion", esas deben ser prioridad en el corpus de entrenamiento.</p>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">terminal — Script de analisis previo a la Semana 2</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-python"># Ejecuta esto para analizar tus datos antes de programar el NLP
+# python analizar_s1.py
+import sys, os
+sys.path.insert(0, 'src')
+from db import get_db, estadisticas
+
+db = get_db()
+
+print("=" * 50)
+print("ANALISIS DE DATOS — SEMANA 1")
+print("=" * 50)
+
+# Estadisticas generales
+stats = estadisticas()
+print(f"Total conversaciones  : {stats['total']}")
+print(f"Reconocidas           : {stats['reconocidos']}")
+print(f"No reconocidas        : {stats['no_reconocidos']}")
+print(f"Tasa de exito         : {stats['tasa_exito']}%")
+
+# Preguntas no reconocidas mas frecuentes
+print("\nPreguntas NO reconocidas (ordenadas):")
+cursor = db["sesiones"].find(
+    {"fase": "s1", "reconocido": False},
+    {"usuario_raw": 1, "_id": 0}
+)
+for doc in cursor:
+    print(f"  - {doc['usuario_raw']}")</code></pre>
+  </div>
+
+  <div class="reason-block">
+    <div class="rb-head">
+      <span class="rb-badge">Razonamiento</span>
+      <div class="rb-info">
+        <h3>Preguntas — Semana 2, Parte A</h3>
+        <p>Estas preguntas conectan el analisis de datos con el diseno del NLP.</p>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta 7</div>
+      <p>Ejecuta el script de analisis. ¿Cual es tu tasa de exito actual? ¿Cuales son las 5 preguntas no reconocidas mas frecuentes? ¿Como informan estas preguntas el diseno de tu modelo NLP?</p>
+      <textarea class="ans" placeholder="Pega la salida del script y tu analisis..."></textarea>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta 8</div>
+      <p>¿Por que crear <code class="il">fase-2</code> desde <code class="il">fase-1</code> en lugar de desde <code class="il">main</code>? ¿Que diferencia hay en el historial de commits resultante?</p>
+      <textarea class="ans" placeholder="Tu respuesta..."></textarea>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     S2 CODE
+══════════════════════════════════════════════ -->
+<div id="page-s2-code" class="page">
+<div class="hero" style="background:linear-gradient(135deg,#0a2010 0%,#0a3020 100%);">
+  <div class="hero-phase">Semana 2 — Parte B</div>
+  <h1>Fase 2: NLP Entrenado con<br>Datos Reales de MongoDB</h1>
+  <p>El modelo TF-IDF no se entrena con datos de ejemplo inventados. Se entrena con las preguntas reales que los usuarios hicieron en la Semana 1. Asi es como funciona el aprendizaje basado en datos en produccion.</p>
+  <div class="chips">
+    <span class="chip chip-tool">NLTK</span>
+    <span class="chip chip-tool">TF-IDF</span>
+    <span class="chip chip-db">MongoDB como fuente</span>
+  </div>
+</div>
+<div class="content">
+
+  <div class="obj-box">
+    <div class="obj-label">Objetivo de esta fase</div>
+    <p>Implementar el pipeline NLP completo que lee las sesiones de MongoDB para enriquecer su corpus, entrena un modelo TF-IDF y guarda cada nueva conversacion con su puntuacion de similitud. Al terminar, MongoDB tendra datos de S1 y S2 listos para el RAG de la Semana 3.</p>
+  </div>
+
+  <h2 class="stitle">Pipeline NLP con Datos de MongoDB</h2>
+  <div class="exp-card">
+    <div class="ec-n">1</div>
+    <h4>De datos estaticos a datos dinamicos</h4>
+    <p>En la Fase 1, la base de conocimiento era un diccionario fijo en el codigo. En la Fase 2, el corpus del modelo TF-IDF se <strong>enriquece con las preguntas reales de MongoDB</strong>. Las preguntas no reconocidas de la Semana 1 se agregan como nuevas entradas al corpus si el desarrollador las etiqueta correctamente.</p>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">src/chatbot_s2.py — NLP con corpus enriquecido desde MongoDB</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-python"># ================================================================
+# src/chatbot_s2.py
+# Chatbot NLP con TF-IDF. El corpus se enriquece con datos
+# reales de MongoDB generados en la Semana 1.
+# Rama: fase-2
+# ================================================================
+import re
+import nltk
+import numpy as np
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import SnowballStemmer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+from db import guardar_sesion, obtener_todas_sesiones, estadisticas
+
+nltk.download("punkt", quiet=True)
+nltk.download("stopwords", quiet=True)
+nltk.download("punkt_tab", quiet=True)
+
+stemmer = SnowballStemmer("spanish")
+STOP_ES = set(stopwords.words("spanish"))
+STOP_ES.update(["hola", "ok", "oye"])
+
+# ── Corpus base ─────────────────────────────────────────────────
+# Este es el corpus inicial. Se AMPLIA con datos de MongoDB.
+CORPUS_BASE = {
+    "cuanto cuesta el producto":
+        "Nuestros productos van de $100 a $500 MXN segun el modelo.",
+    "cual es el precio de los articulos":
+        "Nuestros productos van de $100 a $500 MXN segun el modelo.",
+    "en que horario estan abiertos":
+        "Atendemos lunes a viernes de 9am a 6pm.",
+    "a que hora cierran":
+        "Cerramos a las 6pm de lunes a viernes.",
+    "donde estan ubicados":
+        "Estamos en Av. Universidad 123, Guadalajara, Jalisco.",
+    "tienen envios a domicilio":
+        "Si, enviamos en 3-5 dias habiles a toda la republica.",
+    "como puedo contactarlos":
+        "Llama al 33-1234-5678 o escribe a info@empresa.com",
+    "aceptan tarjeta de credito":
+        "Aceptamos todas las tarjetas Visa y Mastercard.",
+    "tienen garantia los productos":
+        "Todos nuestros productos tienen 1 ano de garantia.",
+    "aceptan devoluciones":
+        "Aceptamos devoluciones en 30 dias con ticket de compra.",
+}
+
+
+def pipeline_nlp(texto):
+    """Tokenizacion + stopwords + stemming."""
+    texto = texto.lower()
+    texto = re.sub(r"[^a-zaeiouan\s]", "", texto)
+    tokens = word_tokenize(texto, language="spanish")
+    tokens = [t for t in tokens if t not in STOP_ES and len(t) > 1]
+    return [stemmer.stem(t) for t in tokens]
+
+
+def enriquecer_corpus_desde_mongodb():
+    """
+    Lee las sesiones de S1 que fueron RECONOCIDAS y las agrega
+    al corpus. Esto amplia el modelo con variaciones de lenguaje
+    real que los usuarios usaron.
+
+    Nota: Solo se agregan las reconocidas porque sabemos que
+    tienen una respuesta correcta asociada.
+    """
+    sesiones = obtener_todas_sesiones(fase="s1")
+    corpus_extra = {}
+    for s in sesiones:
+        if s.get("reconocido") and s.get("usuario") and s.get("respuesta"):
+            # Evitar duplicados exactos con el corpus base
+            if s["usuario"] not in CORPUS_BASE:
+                corpus_extra[s["usuario"]] = s["respuesta"]
+
+    print(f"[NLP] Corpus base: {len(CORPUS_BASE)} entradas")
+    print(f"[NLP] Entradas de MongoDB: {len(corpus_extra)}")
+    return {**CORPUS_BASE, **corpus_extra}
+
+
+class ChatbotNLP:
+    def __init__(self, umbral=0.2):
+        self.umbral = umbral
+        self.corpus = enriquecer_corpus_desde_mongodb()
+        self.preguntas = list(self.corpus.keys())
+        self.respuestas = list(self.corpus.values())
+
+        self.vec = TfidfVectorizer(
+            tokenizer=pipeline_nlp,
+            token_pattern=None,
+            lowercase=False
+        )
+        self.matriz = self.vec.fit_transform(self.preguntas)
+        print(f"[NLP] Modelo entrenado. Vocabulario: "
+              f"{len(self.vec.vocabulary_)} terminos")
+
+    def responder(self, pregunta_raw):
+        """Busca la mejor coincidencia y guarda en MongoDB."""
+        vec_usr = self.vec.transform([pregunta_raw])
+        sims = cosine_similarity(vec_usr, self.matriz)[0]
+        idx = int(np.argmax(sims))
+        mejor_sim = float(sims[idx])
+
+        print(f"  [NLP] Similitud: {mejor_sim:.3f} "
+              f"(umbral: {self.umbral})")
+
+        reconocido = mejor_sim >= self.umbral
+        if reconocido:
+            respuesta = self.respuestas[idx]
+            metodo = f"tfidf_cosine_{mejor_sim:.2f}"
+        else:
+            respuesta = (f"No encontre una respuesta adecuada "
+                         f"(similitud maxima: {mejor_sim:.2f}). "
+                         "Tu pregunta queda registrada.")
+            metodo = "sin_match_nlp"
+
+        # Guardar en MongoDB con la puntuacion de similitud
+        guardar_sesion(
+            fase="s2",
+            usuario_raw=pregunta_raw,
+            usuario_norm=pregunta_raw.lower().strip(),
+            respuesta=respuesta,
+            reconocido=reconocido,
+            similitud=round(mejor_sim, 4),
+            metodo=metodo
+        )
+        return respuesta
+
+
+if __name__ == "__main__":
+    bot = ChatbotNLP(umbral=0.2)
+    print("\nChatbot NLP activo. 'stats' para estadisticas, 'salir' para terminar.\n")
+    while True:
+        entrada = input("Tu: ").strip()
+        if not entrada:
+            continue
+        if entrada.lower() == "salir":
+            print(estadisticas())
+            break
+        if entrada.lower() == "stats":
+            print(estadisticas())
+            continue
+        print(f"Bot: {bot.responder(entrada)}\n")</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">terminal — Commit y PR de la Semana 2</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-bash">git add src/chatbot_s2.py tests/test_s2.py
+git commit -m "feat(s2): chatbot NLP con corpus enriquecido desde MongoDB"
+git push origin fase-2
+
+gh pr create --base main --head fase-2 \
+  --title "Semana 2: NLP con datos reales de MongoDB" \
+  --body "## Cambios
+- Pipeline NLP: tokenizacion, stopwords, stemming
+- Corpus enriquecido con sesiones reales de S1 via MongoDB
+- Similitud TF-IDF guardada en cada sesion de MongoDB
+
+## Comparativa S1 vs S2
+(Incluye la tasa de exito de S1 y la tasa de exito de S2 con los mismos mensajes de prueba)"</code></pre>
+  </div>
+
+  <div class="reason-block">
+    <div class="rb-head">
+      <span class="rb-badge">Razonamiento</span>
+      <div class="rb-info">
+        <h3>Preguntas — Semana 2, Parte B</h3>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta 9</div>
+      <p>Compara la tasa de exito del bot S1 vs S2 usando los mismos 10 mensajes de prueba. ¿Mejoro? ¿En cuanto? ¿Hubo algun caso donde S1 respondio correctamente pero S2 no?</p>
+      <textarea class="ans" placeholder="Tu comparativa con numeros reales..."></textarea>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta 10</div>
+      <p>El metodo <code class="il">enriquecer_corpus_desde_mongodb()</code> solo agrega sesiones <code class="il">reconocido: True</code>. ¿Por que no agregamos tambien las no reconocidas? ¿Que problema causaria agregar preguntas sin respuesta correcta al corpus?</p>
+      <textarea class="ans" placeholder="Tu respuesta..."></textarea>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta 11 — Consulta MongoDB</div>
+      <p>Escribe una consulta de MongoDB (usando la shell de Atlas o PyMongo) que devuelva todos los documentos de fase S2 donde la similitud fue mayor a 0.5, ordenados de mayor a menor similitud. Muestra la consulta y los primeros 3 resultados.</p>
+      <textarea class="ans" placeholder="Tu consulta y resultados..."></textarea>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     S3 GIT — ACTIONS
+══════════════════════════════════════════════ -->
+<div id="page-s3-git" class="page">
+<div class="hero" style="background:linear-gradient(135deg,#1a0a2e 0%,#2a0a4e 100%);">
+  <div class="hero-phase">Semana 3 — Parte A</div>
+  <h1>GitHub Actions: Integracion Continua del Chatbot</h1>
+  <p>Cada vez que hagas push a cualquier rama, GitHub Actions ejecutara automaticamente las pruebas unitarias de las tres fases. Si alguna falla, el PR no podra mergearse. Asi se protege la calidad del codigo en equipos profesionales.</p>
+  <div class="chips">
+    <span class="chip chip-git">GitHub Actions</span>
+    <span class="chip chip-git">CI Pipeline</span>
+    <span class="chip chip-git">pytest</span>
+  </div>
+</div>
+<div class="content">
+
+  <div class="obj-box">
+    <div class="obj-label">Objetivo de esta parte</div>
+    <p>Configurar un workflow de GitHub Actions que ejecute automaticamente las pruebas unitarias al hacer push. El workflow debe correr en Python 3.10, instalar dependencias desde <code class="il">requirements.txt</code> y reportar si las pruebas pasaron o fallaron.</p>
+  </div>
+
+  <h2 class="stitle">Estructura del Workflow</h2>
+  <div class="exp-card">
+    <div class="ec-n">1</div>
+    <h4>¿Que es GitHub Actions?</h4>
+    <p>Es el sistema de automatizacion integrado en GitHub. Un <strong>workflow</strong> es un archivo YAML que describe que pasos ejecutar y cuando. Los pasos corren en servidores de GitHub (runners). Para este proyecto, el trigger es cualquier push o PR a cualquier rama.</p>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">.github/workflows/ci.yml — Pipeline de CI</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-yaml"># ================================================================
+# GitHub Actions: CI para el Proyecto de Chatbot
+# Se ejecuta en cada push y Pull Request a cualquier rama
+# ================================================================
+name: CI — Pruebas del Chatbot
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Ejecutar pruebas unitarias
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          python -m nltk.downloader punkt stopwords punkt_tab
+
+      - name: Ejecutar pruebas Semana 1
+        run: python tests/test_s1.py
+
+      - name: Ejecutar pruebas Semana 2
+        run: python tests/test_s2.py
+
+      - name: Ejecutar pruebas Semana 3
+        run: python tests/test_s3.py
+
+      # Las pruebas de MongoDB y LLM usan mocks para no
+      # requerir conexion real en el entorno de CI
+      - name: Resumen de cobertura
+        run: |
+          echo "Todas las pruebas unitarias pasaron correctamente."
+          echo "Revisar los logs arriba para detalles por modulo."</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">requirements.txt — Dependencias completas del proyecto</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-text">pymongo==4.7.2
+python-dotenv==1.0.1
+nltk==3.8.1
+scikit-learn==1.5.0
+numpy==1.26.4
+requests==2.32.3
+openai==1.35.7
+textblob==0.18.0
+chromadb==0.5.3
+sentence-transformers==3.0.1</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">terminal — Configurar Actions y push</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-bash">git checkout -b fase-3   # Desde fase-2
+git push origin fase-3
+
+# Agregar el workflow
+git add .github/workflows/ci.yml requirements.txt
+git commit -m "feat(ci): agregar GitHub Actions para pruebas automaticas"
+git push origin fase-3
+
+# Verificar que Actions se activo
+gh run list              # Lista los workflows ejecutados
+gh run view              # Ver el resultado del ultimo run</code></pre>
+  </div>
+
+  <div class="reason-block">
+    <div class="rb-head">
+      <span class="rb-badge">Razonamiento</span>
+      <div class="rb-info">
+        <h3>Preguntas — Semana 3, Parte A</h3>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta 12</div>
+      <p>Despues de hacer push del workflow, ve a la pestana <strong>Actions</strong> en tu repositorio de GitHub. ¿El workflow se ejecuto correctamente? Toma una captura de pantalla e incluye el link directo al run. ¿Cuanto tiempo tardo en completarse?</p>
+      <textarea class="ans" placeholder="Link al run y tu observacion..."></textarea>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta 13</div>
+      <p>Rompe intencionalmente una prueba en <code class="il">test_s1.py</code> (cambia un assert para que falle), haz push y observa que pasa en GitHub Actions. Luego corrigela. ¿Como podria usarse esto para proteger un proyecto en produccion?</p>
+      <textarea class="ans" placeholder="Describe lo que observaste..."></textarea>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     S3 CODE
+══════════════════════════════════════════════ -->
+<div id="page-s3-code" class="page">
+<div class="hero" style="background:linear-gradient(135deg,#1a0a2e 0%,#0f1a45 100%);">
+  <div class="hero-phase">Semana 3 — Parte B</div>
+  <h1>Fase 3: LLM con RAG<br>desde MongoDB</h1>
+  <p>El LLM no trabaja con datos estaticos. Usa el historial completo de conversaciones almacenado en MongoDB como contexto RAG. Las conversaciones de las Semanas 1 y 2 se convierten en el conocimiento que guia al modelo.</p>
+  <div class="chips">
+    <span class="chip chip-tool">Ollama / OpenAI</span>
+    <span class="chip chip-db">RAG desde MongoDB</span>
+    <span class="chip chip-tool">Memoria contextual</span>
+  </div>
+</div>
+<div class="content">
+
+  <div class="obj-box">
+    <div class="obj-label">Objetivo de esta fase</div>
+    <p>Integrar un LLM cuyo system prompt se construye dinamicamente con pares pregunta-respuesta exitosos extraidos de MongoDB (RAG). La memoria conversacional tambien persiste en MongoDB, creando un sistema que aprende de su propio historial.</p>
+  </div>
+
+  <h2 class="stitle">¿Que es RAG en este contexto?</h2>
+  <div class="exp-card">
+    <div class="ec-n">1</div>
+    <h4>Retrieval Augmented Generation</h4>
+    <p>RAG combina busqueda (Retrieval) con generacion (Generation). En vez de esperar que el LLM "sepa" las respuestas de tu negocio, le pasas informacion relevante en el prompt. En este proyecto, esa informacion viene de MongoDB: los pares pregunta-respuesta exitosos de S1 y S2.</p>
+  </div>
+  <div class="exp-card">
+    <div class="ec-n">2</div>
+    <h4>Memoria Persistente vs Memoria de Ventana</h4>
+    <p>En la version anterior, la memoria era una lista Python que desaparecia al cerrar el programa. Ahora, cada turno se guarda en MongoDB con <code class="il">session_id</code>. Al reiniciar el chatbot con el mismo session_id, la conversacion continua donde se quedo.</p>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">src/chatbot_s3.py — LLM con RAG desde MongoDB y memoria persistente</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-python"># ================================================================
+# src/chatbot_s3.py
+# LLM con RAG desde MongoDB. Memoria persistente por session_id.
+# Rama: fase-3
+# ================================================================
+import os
+import uuid
+import requests
+from datetime import datetime, timezone
+from dotenv import load_dotenv
+from db import get_db, guardar_sesion
+
+load_dotenv()
+
+USE_OLLAMA = True          # Cambia a False para usar OpenAI
+OLLAMA_URL = "http://localhost:11434/api/chat"
+OLLAMA_MODEL = "llama3.2"
+OPENAI_KEY = os.getenv("OPENAI_API_KEY")
+VENTANA = 8                # Mensajes de historial a incluir
+
+
+# ── RAG: Construir contexto desde MongoDB ───────────────────────
+
+def recuperar_contexto_rag(n=15):
+    """
+    Extrae los N pares pregunta-respuesta mas exitosos
+    de MongoDB para usarlos como contexto del LLM.
+
+    Criterio de seleccion:
+    - Reconocidos correctamente (reconocido: True)
+    - De cualquier fase (S1 o S2)
+    - Con mayor similitud en S2 (las "mas seguras")
+    - Sin duplicar respuestas identicas
+    """
+    db = get_db()
+
+    # Primero los de S2 con alta similitud (mas confiables)
+    s2_docs = list(db["sesiones"].find(
+        {"fase": "s2", "reconocido": True, "similitud": {"$gte": 0.3}},
+        {"usuario_raw": 1, "respuesta": 1, "similitud": 1}
+    ).sort("similitud", -1).limit(n))
+
+    # Completar con S1 si no hay suficientes de S2
+    s1_docs = []
+    if len(s2_docs) < n:
+        s1_docs = list(db["sesiones"].find(
+            {"fase": "s1", "reconocido": True},
+            {"usuario_raw": 1, "respuesta": 1}
+        ).limit(n - len(s2_docs)))
+
+    todos = s2_docs + s1_docs
+
+    # Formatear como contexto para el system prompt
+    if not todos:
+        return "No hay historial previo disponible."
+
+    lineas = ["Pares pregunta-respuesta de conversaciones reales:"]
+    respuestas_vistas = set()
+    for doc in todos:
+        resp = doc.get("respuesta", "")
+        if resp not in respuestas_vistas:
+            lineas.append(f"P: {doc.get('usuario_raw','')}")
+            lineas.append(f"R: {resp}")
+            lineas.append("")
+            respuestas_vistas.add(resp)
+
+    return "\n".join(lineas)
+
+
+# ── Memoria persistente por session_id ─────────────────────────
+
+def guardar_turno_s3(session_id, rol, contenido):
+    """Guarda un turno del LLM en MongoDB con session_id."""
+    db = get_db()
+    db["sesiones_s3"].insert_one({
+        "session_id": session_id,
+        "rol": rol,
+        "contenido": contenido,
+        "timestamp": datetime.now(timezone.utc)
+    })
+
+
+def recuperar_historial(session_id, ventana=VENTANA):
+    """Recupera los ultimos N mensajes de una sesion."""
+    db = get_db()
+    docs = list(db["sesiones_s3"].find(
+        {"session_id": session_id},
+        {"rol": 1, "contenido": 1, "_id": 0}
+    ).sort("timestamp", -1).limit(ventana))
+    # Invertir para orden cronologico
+    return [
+        {"role": d["rol"], "content": d["contenido"]}
+        for d in reversed(docs)
+    ]
+
+
+# ── LLM ────────────────────────────────────────────────────────
+
+def llamar_llm(mensajes):
+    """Llama al LLM con el historial completo."""
+    if USE_OLLAMA:
+        payload = {
+            "model": OLLAMA_MODEL,
+            "messages": mensajes,
+            "stream": False,
+            "options": {"temperature": 0.7, "num_predict": 300}
+        }
+        try:
+            r = requests.post(OLLAMA_URL, json=payload, timeout=60)
+            r.raise_for_status()
+            return r.json()["message"]["content"]
+        except requests.exceptions.ConnectionError:
+            return "Error: Ollama no esta corriendo. Ejecuta: ollama serve"
+        except Exception as e:
+            return f"Error LLM: {e}"
+    else:
+        from openai import OpenAI
+        client = OpenAI(api_key=OPENAI_KEY)
+        resp = client.chat.completions.create(
+            model="gpt-4o-mini", messages=mensajes,
+            max_tokens=300, temperature=0.7
+        )
+        return resp.choices[0].message.content
+
+
+def chatbot_s3(mensaje, session_id):
+    """
+    Flujo completo de S3:
+    1. Recuperar contexto RAG de MongoDB
+    2. Recuperar historial de la sesion actual
+    3. Construir mensajes con system prompt dinamico
+    4. Llamar al LLM
+    5. Guardar turno en MongoDB
+    """
+    # 1. Contexto RAG desde MongoDB
+    contexto_rag = recuperar_contexto_rag(n=12)
+
+    # 2. Historial de esta sesion
+    historial = recuperar_historial(session_id)
+
+    # 3. System prompt con RAG integrado
+    system = f"""Eres un asistente virtual de atencion al cliente.
+Responde siempre en espanol, de forma profesional y empatica.
+
+CONTEXTO BASADO EN CONVERSACIONES REALES:
+{contexto_rag}
+
+INSTRUCCIONES:
+- Usa el contexto anterior como tu base de conocimiento principal.
+- Si la pregunta del usuario coincide con algo del contexto, usa esa informacion.
+- Si no tienes la informacion, admitelo y ofrece transferir con un agente.
+- Eres consciente del historial de esta conversacion.
+- Nunca inventes precios, fechas o datos especificos."""
+
+    mensajes = [
+        {"role": "system", "content": system}
+    ] + historial + [
+        {"role": "user", "content": mensaje}
+    ]
+
+    # 4. Llamar al LLM
+    respuesta = llamar_llm(mensajes)
+
+    # 5. Guardar ambos turnos en MongoDB
+    guardar_turno_s3(session_id, "user", mensaje)
+    guardar_turno_s3(session_id, "assistant", respuesta)
+
+    # Tambien registrar en coleccion principal para estadisticas
+    guardar_sesion(
+        fase="s3", usuario_raw=mensaje,
+        usuario_norm=mensaje.lower().strip(),
+        respuesta=respuesta, reconocido=True,
+        metodo="llm_rag"
+    )
+    return respuesta
+
+
+# ── Loop principal ──────────────────────────────────────────────
+if __name__ == "__main__":
+    print("Chatbot S3 — LLM con RAG desde MongoDB")
+    print("Escribe 'nuevo' para nueva sesion, 'salir' para terminar.\n")
+
+    session_id = str(uuid.uuid4())
+    print(f"Session ID: {session_id}")
+    print("(Guarda este ID para continuar la conversacion despues)\n")
+
+    while True:
+        entrada = input("Tu: ").strip()
+        if not entrada:
+            continue
+        if entrada.lower() == "salir":
+            break
+        if entrada.lower() == "nuevo":
+            session_id = str(uuid.uuid4())
+            print(f"Nueva sesion iniciada: {session_id}\n")
+            continue
+        if entrada.lower().startswith("retomar:"):
+            session_id = entrada.split(":", 1)[1].strip()
+            print(f"Retomando sesion: {session_id}\n")
+            continue
+
+        respuesta = chatbot_s3(entrada, session_id)
+        print(f"Bot: {respuesta}\n")</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">terminal — PR final de Semana 3</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-bash">git add src/chatbot_s3.py tests/test_s3.py .github/workflows/ci.yml
+git commit -m "feat(s3): LLM con RAG desde MongoDB y memoria persistente"
+git push origin fase-3
+
+gh pr create --base main --head fase-3 \
+  --title "Semana 3: LLM + RAG + GitHub Actions" \
+  --body "## Que incluye
+
+- Chatbot S3 con LLM (Ollama/OpenAI)
+- RAG: system prompt dinamico con pares de MongoDB
+- Memoria persistente por session_id en MongoDB
+- GitHub Actions CI configurado y funcionando
+
+## Estadisticas finales de MongoDB
+(Pega la salida de estadisticas() con datos de las 3 fases)
+
+## Link al run de GitHub Actions exitoso
+(Pega el URL del run de Actions)"</code></pre>
+  </div>
+
+  <div class="reason-block">
+    <div class="rb-head">
+      <span class="rb-badge">Razonamiento</span>
+      <div class="rb-info">
+        <h3>Preguntas — Semana 3, Parte B</h3>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta 14</div>
+      <p>Inicia una sesion, pregunta algo, cierra el programa. Luego reinicia con el mismo session_id usando <code class="il">retomar:TU_SESSION_ID</code>. ¿El bot recuerda la conversacion anterior? ¿Que documentos de MongoDB hacen posible esto?</p>
+      <textarea class="ans" placeholder="Tu experimento..."></textarea>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta 15 — RAG</div>
+      <p>Compara el contexto RAG que se inyecta en el system prompt cuando tienes 5 conversaciones en MongoDB vs cuando tienes 50. ¿Cambia la calidad de las respuestas? ¿Por que el tamano del historial importa?</p>
+      <textarea class="ans" placeholder="Tu analisis..."></textarea>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta 16 — Arquitectura Final</div>
+      <p>Dibuja o describe el flujo completo de datos del sistema final: desde que el usuario escribe hasta que recibe la respuesta, pasando por MongoDB, RAG, historial y LLM. ¿En que punto podria fallar el sistema y como lo detectarias?</p>
+      <textarea class="ans" placeholder="Tu arquitectura..."></textarea>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     RETO
+══════════════════════════════════════════════ -->
+<div id="page-reto" class="page">
+<div class="hero" style="background:linear-gradient(135deg,#1a0505 0%,#2a0a0a 100%);">
+  <div class="hero-phase">Reto Extra — Rama feature/reto-sentimiento</div>
+  <h1>Sentimiento Adaptativo<br>y Base Vectorial</h1>
+  <p>Extiende el chatbot con analisis de sentimiento y busqueda semantica real. Todo en su propia rama de feature, con su propio PR documentado.</p>
+  <div class="chips">
+    <span class="chip chip-tool">TextBlob</span>
+    <span class="chip chip-db">ChromaDB</span>
+    <span class="chip chip-git">Feature branch</span>
+  </div>
+</div>
+<div class="content">
+
+  <div class="obj-box">
+    <div class="obj-label">Objetivo del Reto</div>
+    <p>Crear una rama <code class="il">feature/reto-sentimiento</code> desde <code class="il">fase-3</code>. Implementar analisis de sentimiento que modifique el tono del LLM y una base vectorial ChromaDB para busqueda semantica. Abrir un PR documentado a main como entrega.</p>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">terminal — Crear rama del reto</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-bash">git checkout fase-3
+git checkout -b feature/reto-sentimiento
+git push origin feature/reto-sentimiento</code></pre>
+  </div>
+
+  <div class="code-wrap">
+    <div class="code-hdr"><span class="code-title">src/reto_sentimiento.py — Sentimiento + Tono Adaptativo en LLM</span><button class="copy-btn" onclick="cp(this)">Copiar</button></div>
+    <pre><code class="language-python"># ================================================================
+# src/reto_sentimiento.py
+# Analisis de sentimiento integrado con el LLM de S3.
+# El sentimiento modifica el system prompt dinamicamente.
+# ================================================================
+from textblob import TextBlob
+from chatbot_s3 import llamar_llm, recuperar_contexto_rag, recuperar_historial, guardar_turno_s3
+import uuid
+
+def analizar_sentimiento(texto):
+    """Retorna estado emocional y polaridad del texto."""
+    pol = TextBlob(texto).sentiment.polarity
+    if pol < -0.3:   estado = "enojado"
+    elif pol < -0.05: estado = "frustrado"
+    elif pol < 0.1:   estado = "neutral"
+    elif pol < 0.5:   estado = "satisfecho"
+    else:             estado = "muy_positivo"
+    return {"estado": estado, "polaridad": round(pol, 3)}
+
+
+def instruccion_tono(estado):
+    instrucciones = {
+        "enojado":
+            "ATENCION: El usuario esta enojado. Responde con maxima empatia. "
+            "Primero valida su sentimiento. Luego ofrece solucion concreta.",
+        "frustrado":
+            "El usuario muestra frustracion. Se especialmente paciente y claro.",
+        "neutral":  "Responde de forma profesional y eficiente.",
+        "satisfecho": "El usuario esta satisfecho. Puedes ser amigable.",
+        "muy_positivo": "El usuario esta muy contento. Comparte su entusiasmo.",
+    }
+    return instrucciones.get(estado, instrucciones["neutral"])
+
+
+def chatbot_adaptativo(mensaje, session_id):
+    """LLM con tono adaptado al sentimiento del usuario."""
+    sentimiento = analizar_sentimiento(mensaje)
+    print(f"  [SENTIMIENTO] {sentimiento['estado']} "
+          f"(polaridad: {sentimiento['polaridad']})")
+
+    contexto_rag = recuperar_contexto_rag(n=10)
+    historial = recuperar_historial(session_id)
+    tono = instruccion_tono(sentimiento["estado"])
+
+    system = f"""Eres un asistente virtual de atencion al cliente.
+Responde en espanol, de forma profesional.
+
+CONTEXTO:
+{contexto_rag}
+
+TONO REQUERIDO:
+{tono}"""
+
+    mensajes = ([{"role": "system", "content": system}]
+                + historial
+                + [{"role": "user", "content": mensaje}])
+
+    respuesta = llamar_llm(mensajes)
+    guardar_turno_s3(session_id, "user", mensaje)
+    guardar_turno_s3(session_id, "assistant", respuesta)
+    return respuesta, sentimiento
+
+
+if __name__ == "__main__":
+    session_id = str(uuid.uuid4())
+    print("Chatbot Adaptativo activo. Prueba mensajes enojados y positivos.\n")
+    while True:
+        entrada = input("Tu: ").strip()
+        if entrada.lower() == "salir": break
+        respuesta, sent = chatbot_adaptativo(entrada, session_id)
+        print(f"Bot: {respuesta}\n")</code></pre>
+  </div>
+
+  <div class="reason-block">
+    <div class="rb-head">
+      <span class="rb-badge">Razonamiento</span>
+      <div class="rb-info">
+        <h3>Preguntas — Reto Extra</h3>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta R1</div>
+      <p>Prueba 5 mensajes con distintos tonos emocionales. ¿Detecto TextBlob correctamente el sentimiento en espanol? ¿Donde falla? Investiga VADER como alternativa y describe una diferencia clave.</p>
+      <textarea class="ans" placeholder="Tus experimentos con evidencia..."></textarea>
+    </div>
+    <div class="q-item">
+      <div class="q-num">Pregunta R2 — PR del Reto</div>
+      <p>¿Como documentarias en el PR del reto el impacto del analisis de sentimiento en la calidad de las respuestas? ¿Que metrica usarias para demostrarlo?</p>
+      <textarea class="ans" placeholder="Tu propuesta de documentacion..."></textarea>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ENTREGA
+══════════════════════════════════════════════ -->
+<div id="page-entrega" class="page">
+<div class="hero" style="background:linear-gradient(135deg,#0a0a0a 0%,#0f1a45 100%);">
+  <div class="hero-phase">Cierre del Proyecto</div>
+  <h1>Rubrica de Evaluacion<br>y Entrega Final</h1>
+  <p>La entrega es el link a tu repositorio de GitHub. El evaluador revisara el historial de commits, las ramas, los Pull Requests, el estado de GitHub Actions y la documentacion en el README.</p>
+</div>
+<div class="content">
+
+  <h2 class="stitle">Checklist de Entrega</h2>
+  <ul class="chk">
+    <li><input type="checkbox"> Repositorio GitHub privado creado y compartido con el profesor</li>
+    <li><input type="checkbox"> <code class="il">main</code> solo recibio cambios via Pull Request (no commits directos)</li>
+    <li><input type="checkbox"> Rama <code class="il">fase-1</code>: <code class="il">src/db.py</code> + <code class="il">src/chatbot_s1.py</code> + <code class="il">tests/test_s1.py</code></li>
+    <li><input type="checkbox"> Rama <code class="il">fase-2</code>: <code class="il">src/chatbot_s2.py</code> + <code class="il">tests/test_s2.py</code></li>
+    <li><input type="checkbox"> Rama <code class="il">fase-3</code>: <code class="il">src/chatbot_s3.py</code> + <code class="il">.github/workflows/ci.yml</code></li>
+    <li><input type="checkbox"> Tres Pull Requests abiertos o mergeados, cada uno con descripcion</li>
+    <li><input type="checkbox"> GitHub Actions: al menos un run exitoso visible en la pestana Actions</li>
+    <li><input type="checkbox"> MongoDB Atlas: coleccion <code class="il">sesiones</code> con datos de las 3 fases</li>
+    <li><input type="checkbox"> <code class="il">.env.example</code> incluido (con claves en placeholder, no reales)</li>
+    <li><input type="checkbox"> <code class="il">README.md</code> con instrucciones de instalacion y arquitectura del sistema</li>
+    <li><input type="checkbox"> Preguntas de razonamiento (P1–P16) respondidas en el sitio web o en <code class="il">docs/respuestas.md</code></li>
+    <li><input type="checkbox"> [Reto] Rama <code class="il">feature/reto-sentimiento</code> con PR documentado</li>
+  </ul>
+
+  <h2 class="stitle">Rubrica</h2>
+  <table class="rubric-table">
+    <thead><tr><th>Criterio</th><th>Peso</th><th>Descripcion</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Repositorio y Git</strong></td>
+        <td class="pct">20%</td>
+        <td>Estructura de ramas correcta, commits semanticos frecuentes, 3 PRs con descripcion, Actions configurado</td>
+      </tr>
+      <tr>
+        <td><strong>Semana 1 — Reglas + MongoDB</strong></td>
+        <td class="pct">20%</td>
+        <td>db.py funcional, chatbot con normalizacion, MongoDB con 15+ documentos reales, pruebas unitarias</td>
+      </tr>
+      <tr>
+        <td><strong>Semana 2 — NLP con datos reales</strong></td>
+        <td class="pct">25%</td>
+        <td>Pipeline NLP completo, corpus enriquecido desde MongoDB, similitud guardada, comparativa S1 vs S2</td>
+      </tr>
+      <tr>
+        <td><strong>Semana 3 — LLM + RAG + Actions</strong></td>
+        <td class="pct">25%</td>
+        <td>LLM integrado, RAG desde MongoDB, memoria por session_id persistente, Actions verde</td>
+      </tr>
+      <tr>
+        <td><strong>Preguntas de Razonamiento</strong></td>
+        <td class="pct">10%</td>
+        <td>P1–P16 respondidas con evidencia de ejecucion real (capturas, salidas de terminal, datos de MongoDB)</td>
+      </tr>
+      <tr>
+        <td><strong>Reto Extra</strong></td>
+        <td class="pct-reto">+10%</td>
+        <td>Feature branch con sentimiento adaptativo y/o ChromaDB, PR documentado con metricas</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="alert red">
+    <span class="ai">&#9888;</span>
+    <p><strong>Integridad Academica:</strong> Un repositorio con pocos commits grandes ("todo el codigo de golpe") o commits en las ultimas horas antes de la entrega indica trabajo no realizado durante las semanas asignadas. El historial de Git es evidencia del proceso. El profesor puede pedir una defensa oral del codigo en cualquier momento.</p>
+  </div>
+
+  <h2 class="stitle">Referencias y Documentacion</h2>
+  <div class="link-grid">
+    <a href="https://www.mongodb.com/docs/atlas/" target="_blank" class="lcard">
+      <span class="ln">MongoDB Atlas Docs</span>
+      <span class="ld">Configuracion y operaciones</span>
+    </a>
+    <a href="https://docs.github.com/en/actions" target="_blank" class="lcard">
+      <span class="ln">GitHub Actions Docs</span>
+      <span class="ld">Workflows y runners</span>
+    </a>
+    <a href="https://ollama.com/library" target="_blank" class="lcard">
+      <span class="ln">Ollama Model Library</span>
+      <span class="ld">Modelos locales disponibles</span>
+    </a>
+    <a href="https://platform.openai.com/docs/guides/prompt-engineering" target="_blank" class="lcard">
+      <span class="ln">OpenAI Prompt Engineering</span>
+      <span class="ld">Diseno de system prompts</span>
+    </a>
+    <a href="https://www.nltk.org/" target="_blank" class="lcard">
+      <span class="ln">NLTK Documentation</span>
+      <span class="ld">Natural Language Toolkit</span>
+    </a>
+    <a href="https://huggingface.co/learn/nlp-course" target="_blank" class="lcard">
+      <span class="ln">HuggingFace NLP Course</span>
+      <span class="ld">Curso gratuito de NLP</span>
+    </a>
+    <a href="https://docs.github.com/en/pull-requests" target="_blank" class="lcard">
+      <span class="ln">GitHub Pull Requests</span>
+      <span class="ld">Como crear y revisar PRs</span>
+    </a>
+    <a href="https://www.conventionalcommits.org/es/v1.0.0/" target="_blank" class="lcard">
+      <span class="ln">Conventional Commits</span>
+      <span class="ld">Estandar de commits semanticos</span>
+    </a>
+  </div>
+
+</div>
+</div>
+
+</main>
+
+<script>
+const PROGRESS = {
+  intro:10, setup:18,
+  's1-git':28,'s1-code':40,
+  's2-git':52,'s2-code':64,
+  's3-git':76,'s3-code':88,
+  reto:94, entrega:100
+};
+
+function go(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(n=>n.classList.remove('active'));
+  const page=document.getElementById('page-'+id);
+  if(page){page.classList.add('active');window.scrollTo(0,0);}
+  document.querySelectorAll('.sb-item').forEach(n=>{
+    if(n.getAttribute('onclick')&&n.getAttribute('onclick').includes("'"+id+"'"))
+      n.classList.add('active');
+  });
+  document.getElementById('pbar').style.width=(PROGRESS[id]||5)+'%';
+  if(window.innerWidth<=768) document.getElementById('sb').classList.remove('open');
+}
+
+function cp(btn){
+  const code=btn.closest('.code-wrap').querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(()=>{
+    btn.textContent='Copiado';btn.classList.add('ok');
+    setTimeout(()=>{btn.textContent='Copiar';btn.classList.remove('ok');},2000);
+  }).catch(()=>{
+    const ta=document.createElement('textarea');
+    ta.value=code.innerText;document.body.appendChild(ta);
+    ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    btn.textContent='Copiado';setTimeout(()=>btn.textContent='Copiar',2000);
+  });
+}
+
+function toggleSB(){document.getElementById('sb').classList.toggle('open');}
+
+document.addEventListener('input',e=>{
+  if(e.target.classList.contains('ans')){
+    const idx=[...document.querySelectorAll('.ans')].indexOf(e.target);
+    localStorage.setItem('pf_ans_'+idx,e.target.value);
+  }
+});
+document.querySelectorAll('.ans').forEach((f,i)=>{
+  const s=localStorage.getItem('pf_ans_'+i);
+  if(s)f.value=s;
+});
+
+hljs.highlightAll();
+</script>
+</body>
+</html>
